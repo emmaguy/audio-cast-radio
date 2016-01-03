@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">audio cast radio</string>
+    <string name="cast_audio_menu_title">cast</string>
+</resources>

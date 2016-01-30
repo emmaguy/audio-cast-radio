@@ -1,20 +1,20 @@
-package com.emmaguy.audiocastradio.audiostreams
+package com.emmaguy.audiocastradio.features.audiostream
 
 import com.emmaguy.audiocastradio.base.AbstractPresenterTest
 import com.jakewharton.rxrelay.PublishRelay
 import org.junit.Test
 import org.mockito.Mockito.*
 
-class AudioStreamsPresenterTest : AbstractPresenterTest<AudioStreamsPresenter, AudioStreamsPresenter.View>() {
+class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresenter, AudioStreamListPresenter.View>() {
     private val castCapabilityInitialised: PublishRelay<Unit> = PublishRelay.create()
     private val audioStreamClicked: PublishRelay<AudioStream> = PublishRelay.create()
 
-    override fun createPresenter(): AudioStreamsPresenter {
-        return AudioStreamsPresenter()
+    override fun createPresenter(): AudioStreamListPresenter {
+        return AudioStreamListPresenter(listOf(AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)))
     }
 
-    override fun createView(): AudioStreamsPresenter.View {
-        val view = mock(AudioStreamsPresenter.View::class.java)
+    override fun createView(): AudioStreamListPresenter.View {
+        val view = mock(AudioStreamListPresenter.View::class.java)
         `when`(view.onAudioStreamClicked()).thenReturn(audioStreamClicked)
         `when`(view.onCastCapabilityInitialised()).thenReturn(castCapabilityInitialised)
         return view

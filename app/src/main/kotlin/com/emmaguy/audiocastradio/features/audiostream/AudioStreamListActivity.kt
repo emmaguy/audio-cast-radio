@@ -1,9 +1,8 @@
-package com.emmaguy.audiocastradio.audiostreams
+package com.emmaguy.audiocastradio.features.audiostream
 
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import com.emmaguy.audiocastradio.R
 import com.emmaguy.audiocastradio.base.AbstractActivity
@@ -15,11 +14,11 @@ import com.jakewharton.rxrelay.PublishRelay
 import kotlinx.android.synthetic.main.activity_audio_streams.*
 import rx.Observable
 
-class AudioStreamsActivity(val presenter: AudioStreamsPresenter = AudioStreamModule.presenter(),
-                           val castManager: VideoCastManager = AudioStreamModule.castManager()) :
-        AbstractActivity<AudioStreamsPresenter.View>(), AudioStreamsPresenter.View {
+class AudioStreamListActivity(val presenter: AudioStreamListPresenter = AudioStreamListModule.presenter(),
+                              val castManager: VideoCastManager = AudioStreamListModule.castManager()) :
+        AbstractActivity<AudioStreamListPresenter.View>(), AudioStreamListPresenter.View {
     private val castCapabilityInitialised: PublishRelay<Unit> = PublishRelay.create()
-    private val audioStreamClicked: PublishRelay<AudioStream> = PublishRelay.create()
+    private val onAudioStreamClickedRelay: PublishRelay<AudioStream> = PublishRelay.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +35,7 @@ class AudioStreamsActivity(val presenter: AudioStreamsPresenter = AudioStreamMod
             override fun onRemoteMediaPlayerStatusUpdated() {
                 super.onRemoteMediaPlayerStatusUpdated()
 
-                if(castManager.isConnected && castManager.remoteMediaInformation != null && castManager.isRemoteMediaPlaying) {
+                if (castManager.isConnected && castManager.remoteMediaInformation != null && castManager.isRemoteMediaPlaying) {
                     castCapabilityInitialised.call(Unit)
                 }
             }
@@ -49,7 +48,7 @@ class AudioStreamsActivity(val presenter: AudioStreamsPresenter = AudioStreamMod
 
     override fun setAudioStreams(audioStreams: List<AudioStream>) {
         audioStreamsRecyclerView.setHasFixedSize(true)
-        audioStreamsRecyclerView.adapter = AudioStreamsAdapter(audioStreams, audioStreamClicked)
+        audioStreamsRecyclerView.adapter = AudioStreamListAdapter(audioStreams, onAudioStreamClickedRelay)
         audioStreamsRecyclerView.itemAnimator = DefaultItemAnimator()
         audioStreamsRecyclerView.layoutManager = LinearLayoutManager(this)
     }
@@ -63,14 +62,14 @@ class AudioStreamsActivity(val presenter: AudioStreamsPresenter = AudioStreamMod
     }
 
     override fun onAudioStreamClicked(): Observable<AudioStream> {
-        return audioStreamClicked
+        return onAudioStreamClickedRelay
     }
 
-    override fun getPresenter(): AbstractPresenter<AudioStreamsPresenter.View> {
+    override fun getPresenter(): AbstractPresenter<AudioStreamListPresenter.View> {
         return presenter
     }
 
-    override fun getPresenterView(): AudioStreamsPresenter.View {
+    override fun getPresenterView(): AudioStreamListPresenter.View {
         return this
     }
 

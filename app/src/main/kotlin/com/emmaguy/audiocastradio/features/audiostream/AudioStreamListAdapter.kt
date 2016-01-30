@@ -1,4 +1,4 @@
-package com.emmaguy.audiocastradio.audiostreams
+package com.emmaguy.audiocastradio.features.audiostream
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import android.widget.TextView
 import com.emmaguy.audiocastradio.R
 import com.jakewharton.rxrelay.PublishRelay
 
-class AudioStreamsAdapter(val audioStreams: List<AudioStream>, val clickRelay: PublishRelay<AudioStream>) : RecyclerView.Adapter<AudioStreamsAdapter.AudioStreamViewHolder>() {
+internal class AudioStreamListAdapter(val audioStreams: List<AudioStream>, val onAudioStreamClickedRelay: PublishRelay<AudioStream>) : RecyclerView.Adapter<AudioStreamListAdapter.AudioStreamViewHolder>() {
     override fun onBindViewHolder(holder: AudioStreamViewHolder, position: Int) {
         holder.setAudioStream(audioStreams[position])
     }
@@ -19,17 +19,17 @@ class AudioStreamsAdapter(val audioStreams: List<AudioStream>, val clickRelay: P
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioStreamViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_audio_stream, parent, false);
-        return AudioStreamViewHolder(view, audioStreams, clickRelay);
+        return AudioStreamViewHolder(view, audioStreams, onAudioStreamClickedRelay);
     }
 
     class AudioStreamViewHolder(itemView: View,
                                 val audioStreams: List<AudioStream>,
-                                val clickRelay: PublishRelay<AudioStream>) : RecyclerView.ViewHolder(itemView) {
+                                val onAudioStreamClickedRelay: PublishRelay<AudioStream>) : RecyclerView.ViewHolder(itemView) {
         private val titleTextView: TextView = itemView.findViewById(R.id.audioStreamTitle) as TextView
 
         init {
             val viewGroup = itemView.findViewById(R.id.audioStreamsItemContainer) as ViewGroup
-            viewGroup.setOnClickListener { clickRelay.call(audioStreams[adapterPosition]) }
+            viewGroup.setOnClickListener { onAudioStreamClickedRelay.call(audioStreams[adapterPosition]) }
         }
 
         fun setAudioStream(audioStream: AudioStream) {

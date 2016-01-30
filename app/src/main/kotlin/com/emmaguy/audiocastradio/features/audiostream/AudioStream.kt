@@ -1,4 +1,4 @@
-package com.emmaguy.audiocastradio.audiostreams
+package com.emmaguy.audiocastradio.features.audiostream
 
 import android.net.Uri
 import com.google.android.gms.cast.MediaInfo

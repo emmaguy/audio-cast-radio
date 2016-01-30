@@ -2,6 +2,7 @@ package com.emmaguy.audiocastradio.base
 
 import android.support.annotation.CallSuper
 import org.junit.Before
+import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 
 abstract class AbstractPresenterTest<P : AbstractPresenter<V>, V : AbstractPresenter.View> {
@@ -29,4 +30,11 @@ abstract class AbstractPresenterTest<P : AbstractPresenter<V>, V : AbstractPrese
     protected fun presenterOnDetachView() {
         presenter!!.onDetachView()
     }
+
+    protected fun <T> anyObject(): T {
+        Mockito.anyObject<T>()
+        return uninitialized()
+    }
+
+    private fun <T> uninitialized(): T = null as T
 }

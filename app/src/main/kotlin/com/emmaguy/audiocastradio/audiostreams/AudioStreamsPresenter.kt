@@ -11,7 +11,6 @@ class AudioStreamsPresenter() : AbstractPresenter<AudioStreamsPresenter.View>() 
 
         unsubscribeOnDetach(view.onAudioStreamClicked()
                 .skipUntil(view.onCastCapabilityInitialised())
-                .distinctUntilChanged()
                 .subscribe({ audioStream -> view.startStream(audioStream) }))
     }
 

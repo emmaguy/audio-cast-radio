@@ -3,7 +3,6 @@ package com.emmaguy.audiocastradio.audiostreams
 import com.emmaguy.audiocastradio.base.AbstractPresenterTest
 import com.jakewharton.rxrelay.PublishRelay
 import org.junit.Test
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 
 class AudioStreamsPresenterTest : AbstractPresenterTest<AudioStreamsPresenter, AudioStreamsPresenter.View>() {
@@ -31,52 +30,51 @@ class AudioStreamsPresenterTest : AbstractPresenterTest<AudioStreamsPresenter, A
     @Test fun onAudioStreamClickedAfterCastCapabilityInitialised_startsStream() {
         presenterOnAttachView()
 
-        val mockAudioStream = AudioStream("title", "url", "imgurl")
+        val audioStream = AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)
         castCapabilityInitialised.call(Unit)
-        audioStreamClicked.call(mockAudioStream)
-
-        verify(getView()).startStream(mockAudioStream)
-    }
-
-    @Test fun onAudioStreamClicked_whenStartStreamWithSameObjectAlreadyCalled_doesNotCallStartStreamAgain() {
-        presenterOnAttachView()
-
-        val audioStream = AudioStream("title", "url", "imgurl")
-        castCapabilityInitialised.call(Unit)
-        audioStreamClicked.call(audioStream)
         audioStreamClicked.call(audioStream)
 
         verify(getView()).startStream(audioStream)
+    }
+
+    @Test fun onAudioStreamClicked_whenStartStreamWithSameObjectAlreadyCalled_callsStartStreamAgain() {
+        presenterOnAttachView()
+
+        val audioStream = AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)
+        castCapabilityInitialised.call(Unit)
+        audioStreamClicked.call(audioStream)
+        audioStreamClicked.call(audioStream)
+
+        verify(getView(), times(2)).startStream(audioStream)
     }
 
     @Test fun onAudioStreamClicked_whenStartStreamWithDifferentAudioStream_startsStreamWithNewAudioStream() {
         presenterOnAttachView()
 
-        val audioStream = AudioStream("title", "url", "imgurl")
+        val audioStream = AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)
         castCapabilityInitialised.call(Unit)
         audioStreamClicked.call(audioStream)
 
-        val differentAudioStream = AudioStream("title", "different url", "imgurl")
-        audioStreamClicked.call(differentAudioStream)
+        val newAudioStream = AudioStream(DEFAULT_TITLE, "new url", DEFAULT_IMAGE_URL)
+        audioStreamClicked.call(newAudioStream)
 
         verify(getView()).startStream(audioStream)
-        verify(getView()).startStream(audioStream)
+        verify(getView()).startStream(newAudioStream)
     }
 
     @Test fun onAudioStreamClicked_whenCastCapabilityNotInitialisedYet_doesNotStartStream() {
         presenterOnAttachView()
 
-        val mockAudioStream = AudioStream("title", "url", "imgurl")
-        audioStreamClicked.call(mockAudioStream)
+        val audioStream = AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)
+        audioStreamClicked.call(audioStream)
         castCapabilityInitialised.call(Unit)
 
-        verify(getView(), never()).startStream(mockAudioStream)
+        verify(getView(), never()).startStream(audioStream)
     }
 
-    private fun <T> anyObject(): T {
-        Mockito.anyObject<T>()
-        return uninitialized()
+    companion object {
+        private val DEFAULT_TITLE = "title"
+        private val DEFAULT_URL = "url"
+        private val DEFAULT_IMAGE_URL = "image_url"
     }
-
-    private fun <T> uninitialized(): T = null as T
 }

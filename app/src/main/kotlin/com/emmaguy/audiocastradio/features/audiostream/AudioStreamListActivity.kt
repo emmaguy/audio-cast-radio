@@ -1,11 +1,13 @@
 package com.emmaguy.audiocastradio.features.audiostream
 
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import com.emmaguy.audiocastradio.R
 import com.emmaguy.audiocastradio.base.AbstractActivity
 import com.emmaguy.audiocastradio.base.AbstractPresenter
+import com.emmaguy.audiocastradio.features.DividerItemDecoration
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager
 import com.jakewharton.rxrelay.PublishRelay
 import kotlinx.android.synthetic.main.activity_audio_streams.*
@@ -25,6 +27,7 @@ class AudioStreamListActivity(val presenter: AudioStreamListPresenter = AudioStr
         audioStreamsRecyclerView.adapter = AudioStreamListAdapter(audioStreams, onAudioStreamClickedRelay)
         audioStreamsRecyclerView.itemAnimator = DefaultItemAnimator()
         audioStreamsRecyclerView.layoutManager = LinearLayoutManager(this)
+        audioStreamsRecyclerView.addItemDecoration(DividerItemDecoration(ContextCompat.getDrawable(this, R.drawable.divider_audio_streams)));
     }
 
     override fun startStream(audioStream: AudioStream) {

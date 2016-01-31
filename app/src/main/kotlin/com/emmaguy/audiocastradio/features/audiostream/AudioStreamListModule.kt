@@ -1,10 +1,12 @@
 package com.emmaguy.audiocastradio.features.audiostream
 
+import com.emmaguy.audiocastradio.AppModule
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager
 
 internal class AudioStreamListModule {
     companion object {
-        private val audioStreamsPresenter = AudioStreamListPresenter(audioStreams())
+        internal val audioStreamsPresenter = AudioStreamListPresenter(audioStreams(), AppModule.onCastCapabilityInitialised)
+        internal val castManager = VideoCastManager.getInstance()
 
         private fun audioStreams(): List<AudioStream> {
             return listOf(
@@ -20,14 +22,6 @@ internal class AudioStreamListModule {
                     AudioStream("Studio Brussel",
                             "http://mp3.streampower.be/stubru-high.mp3",
                             "http://cds.stubru.be/sites/all/themes/custom/netsites_admin/images/logos/logo.png"))
-        }
-
-        fun presenter(): AudioStreamListPresenter {
-            return audioStreamsPresenter
-        }
-
-        fun castManager(): VideoCastManager {
-            return VideoCastManager.getInstance()
         }
     }
 }

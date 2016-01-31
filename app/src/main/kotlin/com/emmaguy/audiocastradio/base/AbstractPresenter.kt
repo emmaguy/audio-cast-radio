@@ -4,8 +4,8 @@ import rx.Subscription
 import rx.subscriptions.CompositeSubscription
 
 abstract class AbstractPresenter<in V : AbstractPresenter.View> {
+    private val subscriptions: CompositeSubscription = CompositeSubscription()
     private var view: View? = null
-    private var subscriptions: CompositeSubscription? = null
 
     open fun onAttachView(view: V) {
         if (this.view !== null) {
@@ -13,7 +13,6 @@ abstract class AbstractPresenter<in V : AbstractPresenter.View> {
         }
 
         this.view = view
-        this.subscriptions = CompositeSubscription()
     }
 
     open fun onDetachView() {
@@ -22,12 +21,11 @@ abstract class AbstractPresenter<in V : AbstractPresenter.View> {
         }
 
         this.view = null;
-        this.subscriptions?.unsubscribe()
-        this.subscriptions = null;
+        this.subscriptions.clear()
     }
 
     protected fun unsubscribeOnDetach(subscription: Subscription) {
-        subscriptions!!.add(subscription)
+        subscriptions.add(subscription)
     }
 
     interface View {

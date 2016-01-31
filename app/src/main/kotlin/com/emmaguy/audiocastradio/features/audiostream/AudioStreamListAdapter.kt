@@ -8,7 +8,9 @@ import android.widget.TextView
 import com.emmaguy.audiocastradio.R
 import com.jakewharton.rxrelay.PublishRelay
 
-internal class AudioStreamListAdapter(val audioStreams: List<AudioStream>, val onAudioStreamClickedRelay: PublishRelay<AudioStream>) : RecyclerView.Adapter<AudioStreamListAdapter.AudioStreamViewHolder>() {
+internal class AudioStreamListAdapter(val audioStreams: List<AudioStream>,
+                                      val onAudioStreamClickedRelay: PublishRelay<AudioStream>)
+: RecyclerView.Adapter<AudioStreamListAdapter.AudioStreamViewHolder>() {
     override fun onBindViewHolder(holder: AudioStreamViewHolder, position: Int) {
         holder.setAudioStream(audioStreams[position])
     }

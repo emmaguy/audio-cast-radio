@@ -11,17 +11,13 @@ internal class AudioStreamListModule {
         private fun audioStreams(): List<AudioStream> {
             return listOf(
                     AudioStream("Klara",
-                            "http://mp3.streampower.be/klara-high.mp3",
-                            "http://www.radioviainternet.be/images/logos/logo-klara.png"),
+                            "http://mp3.streampower.be/klara-high.mp3"),
                     AudioStream("Nostalgie",
-                            "http://nostalgiewhatafeeling.ice.infomaniak.ch/nostalgiewhatafeeling-128.mp3",
-                            "http://www.nostalgie.be/radioplayer/img/visual-placeholder.png"),
+                            "http://nostalgiewhatafeeling.ice.infomaniak.ch/nostalgiewhatafeeling-128.mp3"),
                     AudioStream("Radio 1",
-                            "http://mp3.streampower.be/radio1-high.mp3",
-                            "http://www.radio1.be/sites/all/themes/benny/logo.png"),
+                            "http://mp3.streampower.be/radio1-high.mp3"),
                     AudioStream("Studio Brussel",
-                            "http://mp3.streampower.be/stubru-high.mp3",
-                            "http://cds.stubru.be/sites/all/themes/custom/netsites_admin/images/logos/logo.png"))
+                            "http://mp3.streampower.be/stubru-high.mp3"))
         }
     }
 }

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="padding_small">5dp</dimen>
-    <dimen name="padding_medium">10dp</dimen>
+    <dimen name="item_audio_stream_list_margin">1dp</dimen>
 </resources>

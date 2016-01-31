@@ -20,7 +20,7 @@ abstract class AbstractPresenter<in V : AbstractPresenter.View> {
             throw IllegalStateException("View has already been detached")
         }
 
-        this.view = null;
+        this.view = null
         this.subscriptions.clear()
     }
 

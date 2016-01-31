@@ -1,13 +1,12 @@
 package com.emmaguy.audiocastradio.features.audiostream
 
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.view.Menu
 import com.emmaguy.audiocastradio.R
 import com.emmaguy.audiocastradio.base.AbstractActivity
 import com.emmaguy.audiocastradio.base.AbstractPresenter
-import com.emmaguy.audiocastradio.features.DividerItemDecoration
+import com.emmaguy.audiocastradio.features.audiostream.MarginDecoration
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager
 import com.jakewharton.rxrelay.PublishRelay
 import kotlinx.android.synthetic.main.activity_audio_streams.*
@@ -24,10 +23,10 @@ class AudioStreamListActivity(val presenter: AudioStreamListPresenter = AudioStr
 
     override fun setAudioStreams(audioStreams: List<AudioStream>) {
         audioStreamsRecyclerView.setHasFixedSize(true)
-        audioStreamsRecyclerView.adapter = AudioStreamListAdapter(audioStreams, onAudioStreamClickedRelay)
+        audioStreamsRecyclerView.adapter = AudioStreamListAdapter(audioStreams, onAudioStreamClickedRelay, resources)
         audioStreamsRecyclerView.itemAnimator = DefaultItemAnimator()
-        audioStreamsRecyclerView.layoutManager = LinearLayoutManager(this)
-        audioStreamsRecyclerView.addItemDecoration(DividerItemDecoration(ContextCompat.getDrawable(this, R.drawable.divider_audio_streams)));
+        audioStreamsRecyclerView.layoutManager = GridLayoutManager(this, 3)
+        audioStreamsRecyclerView.addItemDecoration(MarginDecoration(resources.getDimensionPixelSize(R.dimen.item_audio_stream_list_margin)))
     }
 
     override fun startStream(audioStream: AudioStream) {

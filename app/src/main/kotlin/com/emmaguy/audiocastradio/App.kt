@@ -1,6 +1,7 @@
 package com.emmaguy.audiocastradio
 
 import android.app.Application
+import com.emmaguy.audiocastradio.features.audiostream.AudioStream
 import com.emmaguy.audiocastradio.features.audiostream.AudioStreamListActivity
 import com.google.android.gms.cast.ApplicationMetadata
 import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration
@@ -39,7 +40,9 @@ class App(val onCastCapabilityInitialised: BehaviorRelay<Unit> = AppModule.onCas
             override fun onRemoteMediaPlayerStatusUpdated() {
                 super.onRemoteMediaPlayerStatusUpdated()
 
-                if (castManager.isConnected && castManager.remoteMediaInformation != null && castManager.isRemoteMediaPlaying) {
+                if (castManager.isConnected
+                        && castManager.isRemoteMediaPlaying
+                        && AudioStream.isFromApp(castManager.remoteMediaInformation)) {
                     onCastCapabilityInitialised.call(Unit)
                 }
             }

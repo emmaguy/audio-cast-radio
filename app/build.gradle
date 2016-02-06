@@ -1,5 +1,16 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+def parseEnvironmentVariable(envVariableName, defaultValue) {
+    def envVariableValue = System.getenv(envVariableName)
+    if(envVariableValue == null) {
+        println "Failed to find environment variable '$envVariableName'. Using default value of '$defaultValue'"
+        envVariableValue = defaultValue
+    }
+
+    return envVariableValue
+}
 
 android {
     compileSdkVersion 23
@@ -11,14 +22,14 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-        resValue "string", "cast_app_id", "placeholderId"
-    }
-    testOptions {
-        unitTests.returnDefaultValues = true
+        resValue "string", "cast_app_id", parseEnvironmentVariable('CAST_APP_ID', 'placeholderId')
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
+    }
+    dexOptions{
+        preDexLibraries = !'true'.equals(System.getenv('CI'))
     }
 }
 
@@ -48,7 +59,7 @@ dependencies {
     testCompile 'org.mockito:mockito-core:2.0.34-beta'
 }
 buildscript {
-    ext.kotlin_version = '1.0.0-beta-4589'
+    ext.kotlin_version = '1.0.0-rc-1036'
     repositories {
         mavenCentral()
     }
@@ -59,19 +70,4 @@ buildscript {
 }
 repositories {
     mavenCentral()
-}
-
-
-def configFile = file("secrets.properties")
-if (configFile.canRead()) {
-    def Properties props = new Properties()
-    props.load(new FileInputStream(configFile))
-
-    if (props != null && props.containsKey('CAST_APP_ID')) {
-        android.defaultConfig.resValue "string", "cast_app_id", props['CAST_APP_ID']
-    } else {
-        println 'Did not find cast app id, using default'
-    }
-} else {
-    println 'secrets.properties not found'
 }

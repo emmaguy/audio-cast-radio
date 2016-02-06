@@ -1,0 +1,23 @@
+# Build configuration for Circle CI
+machine:
+  environment:
+    ANDROID_HOME: /usr/local/android-sdk-linux
+
+checkout:
+  post:
+    - git submodule update --init --recursive
+
+dependencies:
+  pre:
+    - echo y | android update sdk --no-ui --all --filter "tools,platform-tools,android-23"
+    - echo y | android update sdk --no-ui --all --filter "build-tools-23.0.2,extra-google-m2repository,extra-google-google_play_services,extra-android-support"
+    - ANDROID_HOME=/usr/local/android-sdk-linux ./gradlew dependencies
+  cache_directories:
+    - ~/.android
+
+test:
+  override:
+    - ./gradlew clean assemble test
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/app/build/test-results/release/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;

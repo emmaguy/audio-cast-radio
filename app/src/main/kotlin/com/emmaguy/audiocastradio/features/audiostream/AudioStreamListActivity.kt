@@ -6,7 +6,6 @@ import android.view.Menu
 import com.emmaguy.audiocastradio.R
 import com.emmaguy.audiocastradio.base.AbstractActivity
 import com.emmaguy.audiocastradio.base.AbstractPresenter
-import com.emmaguy.audiocastradio.features.audiostream.MarginDecoration
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager
 import com.jakewharton.rxrelay.PublishRelay
 import kotlinx.android.synthetic.main.activity_audio_streams.*

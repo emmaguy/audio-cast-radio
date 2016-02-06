@@ -11,7 +11,7 @@ class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresen
     private val audioStreamClicked: PublishRelay<AudioStream> = PublishRelay.create()
 
     override fun createPresenter(): AudioStreamListPresenter {
-        return AudioStreamListPresenter(listOf(AudioStream(DEFAULT_TITLE, DEFAULT_URL)), castCapabilityInitialised)
+        return AudioStreamListPresenter(listOf(AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)), castCapabilityInitialised)
     }
 
     override fun createView(): AudioStreamListPresenter.View {
@@ -30,7 +30,7 @@ class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresen
     @Test fun onAudioStreamClickedAfterCastCapabilityInitialised_startsStream() {
         presenterOnAttachView()
 
-        val audioStream = AudioStream(DEFAULT_TITLE, DEFAULT_URL)
+        val audioStream = AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)
         castCapabilityInitialised.call(Unit)
         audioStreamClicked.call(audioStream)
 
@@ -40,7 +40,7 @@ class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresen
     @Test fun onAudioStreamClicked_whenStartStreamWithSameObjectAlreadyCalled_callsStartStreamAgain() {
         presenterOnAttachView()
 
-        val audioStream = AudioStream(DEFAULT_TITLE, DEFAULT_URL)
+        val audioStream = AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)
         castCapabilityInitialised.call(Unit)
         audioStreamClicked.call(audioStream)
         audioStreamClicked.call(audioStream)
@@ -51,11 +51,11 @@ class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresen
     @Test fun onAudioStreamClicked_whenStartStreamWithDifferentAudioStream_startsStreamWithNewAudioStream() {
         presenterOnAttachView()
 
-        val audioStream = AudioStream(DEFAULT_TITLE, DEFAULT_URL)
+        val audioStream = AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)
         castCapabilityInitialised.call(Unit)
         audioStreamClicked.call(audioStream)
 
-        val newAudioStream = AudioStream(DEFAULT_TITLE, "new url")
+        val newAudioStream = AudioStream(DEFAULT_TITLE, "new url", DEFAULT_IMAGE_URL)
         audioStreamClicked.call(newAudioStream)
 
         verify(getView()).startStream(audioStream)
@@ -65,7 +65,7 @@ class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresen
     @Test fun onAudioStreamClicked_whenCastCapabilityNotInitialisedYet_doesNotStartStream() {
         presenterOnAttachView()
 
-        val audioStream = AudioStream(DEFAULT_TITLE, DEFAULT_URL)
+        val audioStream = AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)
         audioStreamClicked.call(audioStream)
         castCapabilityInitialised.call(Unit)
 
@@ -75,5 +75,6 @@ class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresen
     companion object {
         private val DEFAULT_TITLE = "title"
         private val DEFAULT_URL = "url"
+        private val DEFAULT_IMAGE_URL = "image_url"
     }
 }

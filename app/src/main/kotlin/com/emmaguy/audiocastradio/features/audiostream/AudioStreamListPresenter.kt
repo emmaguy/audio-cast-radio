@@ -3,6 +3,7 @@ package com.emmaguy.audiocastradio.features.audiostream
 import com.emmaguy.audiocastradio.base.AbstractPresenter
 import com.jakewharton.rxrelay.BehaviorRelay
 import rx.Observable
+import timber.log.Timber
 
 class AudioStreamListPresenter(val audioStreams: List<AudioStream>,
                                val onCastCapabilityInitialised: BehaviorRelay<Unit>)
@@ -14,7 +15,8 @@ class AudioStreamListPresenter(val audioStreams: List<AudioStream>,
 
         unsubscribeOnDetach(view.onAudioStreamClicked()
                 .skipUntil(onCastCapabilityInitialised)
-                .subscribe({ audioStream -> view.startStream(audioStream) }))
+                .subscribe({ audioStream -> view.startStream(audioStream) },
+                        { throwable -> Timber.e(throwable, "Failure when trying to start audio stream") }))
     }
 
     interface View : AbstractPresenter.View {

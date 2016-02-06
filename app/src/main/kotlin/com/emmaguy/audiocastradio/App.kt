@@ -8,12 +8,21 @@ import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager
 import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumerImpl
 import com.jakewharton.rxrelay.BehaviorRelay
+import timber.log.Timber
 import java.util.*
 
 class App(val onCastCapabilityInitialised: BehaviorRelay<Unit> = AppModule.onCastCapabilityInitialised) : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+
+        initialiseCast()
+    }
+
+    private fun initialiseCast() {
         val options = CastConfiguration.Builder(getString(R.string.cast_app_id))
                 .enableAutoReconnect()
                 .enableWifiReconnection()

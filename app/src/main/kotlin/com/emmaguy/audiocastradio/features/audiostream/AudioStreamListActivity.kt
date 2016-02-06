@@ -1,8 +1,11 @@
 package com.emmaguy.audiocastradio.features.audiostream
 
+import android.content.res.Resources
+import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.view.Menu
+import com.emmaguy.audiocastradio.App
 import com.emmaguy.audiocastradio.R
 import com.emmaguy.audiocastradio.base.AbstractActivity
 import com.emmaguy.audiocastradio.base.AbstractPresenter
@@ -11,8 +14,10 @@ import com.jakewharton.rxrelay.PublishRelay
 import kotlinx.android.synthetic.main.activity_audio_streams.*
 import rx.Observable
 
-class AudioStreamListActivity(val presenter: AudioStreamListPresenter = AudioStreamListModule.audioStreamsPresenter,
-                              val castManager: VideoCastManager = AudioStreamListModule.castManager) :
+class AudioStreamListActivity(val module: AudioStreamListModule = AudioStreamListModule(App.instance.appModule),
+                              val presenter: AudioStreamListPresenter = module.audioStreamsPresenter,
+                              val castManager: VideoCastManager = module.appModule.castManager,
+                              val res: Resources = module.appModule.resources) :
         AbstractActivity<AudioStreamListPresenter.View>(), AudioStreamListPresenter.View {
     private val onAudioStreamClickedRelay: PublishRelay<AudioStream> = PublishRelay.create()
 
@@ -22,10 +27,10 @@ class AudioStreamListActivity(val presenter: AudioStreamListPresenter = AudioStr
 
     override fun setAudioStreams(audioStreams: List<AudioStream>) {
         audioStreamsRecyclerView.setHasFixedSize(true)
-        audioStreamsRecyclerView.adapter = AudioStreamListAdapter(audioStreams, onAudioStreamClickedRelay, resources)
+        audioStreamsRecyclerView.adapter = AudioStreamListAdapter(audioStreams, onAudioStreamClickedRelay, res)
         audioStreamsRecyclerView.itemAnimator = DefaultItemAnimator()
         audioStreamsRecyclerView.layoutManager = GridLayoutManager(this, 3)
-        audioStreamsRecyclerView.addItemDecoration(MarginDecoration(resources.getDimensionPixelSize(R.dimen.item_audio_stream_list_margin)))
+        audioStreamsRecyclerView.addItemDecoration(MarginDecoration(res.getDimensionPixelSize(R.dimen.item_audio_stream_list_margin)))
     }
 
     override fun startStream(audioStream: AudioStream) {

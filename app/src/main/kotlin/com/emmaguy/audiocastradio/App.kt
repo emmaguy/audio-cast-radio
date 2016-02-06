@@ -2,41 +2,29 @@ package com.emmaguy.audiocastradio
 
 import android.app.Application
 import com.emmaguy.audiocastradio.features.audiostream.AudioStream
-import com.emmaguy.audiocastradio.features.audiostream.AudioStreamListActivity
 import com.google.android.gms.cast.ApplicationMetadata
-import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager
 import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumerImpl
-import com.jakewharton.rxrelay.BehaviorRelay
 import timber.log.Timber
-import java.util.*
 
-class App(val onCastCapabilityInitialised: BehaviorRelay<Unit> = AppModule.onCastCapabilityInitialised) : Application() {
+class App() : Application() {
+    private val onCastCapabilityInitialised by lazy { appModule.onCastCapabilityInitialised }
+
+    val appModule by lazy { AppModule(this) }
+
     override fun onCreate() {
         super.onCreate()
+
+        instance = this;
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
 
-        initialiseCast()
+        initialiseCast(appModule.castManager)
     }
 
-    private fun initialiseCast() {
-        val options = CastConfiguration.Builder(getString(R.string.cast_app_id))
-                .enableAutoReconnect()
-                .enableWifiReconnection()
-                .enableDebug()
-                .enableLockScreen()
-                .setLaunchOptions(false, Locale.getDefault())
-                .setNextPrevVisibilityPolicy(CastConfiguration.NEXT_PREV_VISIBILITY_POLICY_HIDDEN)
-                .setTargetActivity(AudioStreamListActivity::class.java) // currently singleInstance
-                .enableNotification()
-                .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_PLAY_PAUSE, true)
-                .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_DISCONNECT, true)
-                .build()
-
-        val castManager = VideoCastManager.initialize(this, options)
+    private fun initialiseCast(castManager: VideoCastManager) {
         castManager.addVideoCastConsumer(object : VideoCastConsumerImpl() {
             override fun onApplicationConnected(appMetadata: ApplicationMetadata, sessionId: String, wasLaunched: Boolean) {
                 super.onApplicationConnected(appMetadata, sessionId, wasLaunched)
@@ -59,6 +47,7 @@ class App(val onCastCapabilityInitialised: BehaviorRelay<Unit> = AppModule.onCas
     }
 
     companion object {
+        lateinit var instance: App
         private val NAMESPACE_MEDIA_PLAYBACK = "urn:x-cast:com.google.cast.media"
     }
 }

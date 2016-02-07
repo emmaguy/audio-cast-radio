@@ -25,7 +25,7 @@ android {
         versionName "1.0"
         resValue "string", "cast_app_id", parseEnvironmentVariable('CAST_APP_ID', 'FFFFFFFF')
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.emmaguy.audiocastradio.AudioCastTestRunner"
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

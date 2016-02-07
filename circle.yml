@@ -15,7 +15,28 @@ dependencies:
 
 test:
   override:
+    # Run Unit tests
     - ./gradlew clean assemble test
+
+    # Run Espresso tests with Spoon
+    # Create an sdcard for the emulator, for Spoon's screenshots to be saved to
+    - mksdcard -l e 512M sdcard.img
+    # Start the emulator
+    - emulator -avd circleci-android22 -no-audio -no-window -sdcard sdcard.img:
+        background: true
+        parallel: true
+    # Wait for it to have booted
+    - circle-android wait-for-boot
+    # Disable animations on the emulator
+    - adb shell settings put global window_animation_scale 0
+    - adb shell settings put global transition_animation_scale 0
+    - adb shell settings put global animator_duration_scale 0
+    # Run the Espresso tests
+    - ./gradlew spoon
   post:
-    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
-    - find . -type f -regex ".*/app/build/test-results/release/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+    # Copy unit test output
+    - find . -type f -regex ".*/app/build/test-results/release/.*xml" -exec cp -r {} $CIRCLE_TEST_REPORTS/junit/ \;
+    # Copy Spoon output to the test results directory
+    - cp -r app/build/spoon/debug/* $CIRCLE_TEST_REPORTS
+    # Copy the build outputs to artifacts
+    - cp -r app/build/outputs $CIRCLE_ARTIFACTS

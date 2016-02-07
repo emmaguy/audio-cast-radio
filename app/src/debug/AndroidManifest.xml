@@ -1,7 +1,11 @@
 <manifest package="com.emmaguy.audiocastradio"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Used by Spoon for screenshots -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.SET_ANIMATION_SCALE" />
+
+    <!-- Used by Espresso tests -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
 </manifest>

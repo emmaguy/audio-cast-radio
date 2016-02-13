@@ -1,2 +1,1 @@
-include ':app',':CastCompanionLibrary'
-project(':CastCompanionLibrary').projectDir = new File('CastCompanionLibrary-android/')
+include ':app'

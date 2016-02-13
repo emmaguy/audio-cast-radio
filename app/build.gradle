@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'spoon'
 
-def parseEnvironmentVariable(envVariableName, defaultValue) {
+def environmentVariableOrDefault(envVariableName, defaultValue) {
     def envVariableValue = System.getenv(envVariableName)
     if(envVariableValue == null) {
         println "Failed to find environment variable '$envVariableName'. Using default value of '$defaultValue'"
@@ -23,7 +23,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-        resValue "string", "cast_app_id", parseEnvironmentVariable('CAST_APP_ID', 'FFFFFFFF')
+        resValue "string", "cast_app_id", environmentVariableOrDefault('CAST_APP_ID', 'FFFFFFFF')
 
         testInstrumentationRunner "com.emmaguy.audiocastradio.AudioCastTestRunner"
     }
@@ -49,8 +49,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     // Google Cast
-    compile project(':CastCompanionLibrary')
     compile "com.android.support:mediarouter-v7:$support_library_version"
+    compile 'com.google.android.libraries.cast.companionlibrary:ccl:2.7.4'
     compile 'com.google.android.gms:play-services-cast:8.4.0'
 
     // RxJava

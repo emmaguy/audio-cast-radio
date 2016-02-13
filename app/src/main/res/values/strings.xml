@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">audio cast radio</string>
     <string name="cast_audio_menu_title">cast</string>
+    <string name="toggle_play_stop">Toggle play/stop</string>
 </resources>

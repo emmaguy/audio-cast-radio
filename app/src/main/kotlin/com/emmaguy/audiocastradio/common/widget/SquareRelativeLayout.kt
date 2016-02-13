@@ -1,4 +1,4 @@
-package com.emmaguy.audiocastradio.features.audiostream
+package com.emmaguy.audiocastradio.common.widget
 
 import android.content.Context
 import android.util.AttributeSet

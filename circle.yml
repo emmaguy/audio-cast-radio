@@ -3,10 +3,6 @@ machine:
   environment:
     ANDROID_HOME: /usr/local/android-sdk-linux
 
-checkout:
-  post:
-    - git submodule update --init --recursive
-
 dependencies:
   pre:
     - echo y | android update sdk --no-ui --all --filter "tools,platform-tools,android-23"
@@ -32,11 +28,13 @@ test:
     - adb shell settings put global transition_animation_scale 0
     - adb shell settings put global animator_duration_scale 0
     # Run the Espresso tests
-    - ./gradlew spoon
+    - ./gradlew spoonInternalDebug
   post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - mkdir -p $CIRCLE_TEST_REPORTS/espresso/
     # Copy unit test output
-    - find . -type f -regex ".*/app/build/test-results/release/.*xml" -exec cp -r {} $CIRCLE_TEST_REPORTS/junit/ \;
+    - cp -r app/build/test-results/internalDebug/* $CIRCLE_TEST_REPORTS/junit/
     # Copy Spoon output to the test results directory
-    - cp -r app/build/spoon/debug/* $CIRCLE_TEST_REPORTS
+    - cp -r app/build/spoon/internal/debug/* $CIRCLE_TEST_REPORTS/espresso/
     # Copy the build outputs to artifacts
     - cp -r app/build/outputs $CIRCLE_ARTIFACTS

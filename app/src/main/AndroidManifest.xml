@@ -16,7 +16,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".features.audiostream.AudioStreamListActivity"
+            android:name=".feature.audiostream.AudioStreamListActivity"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

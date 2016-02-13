@@ -1,24 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+    <ProgressBar
+        android:id="@+id/audioStreamListProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/audioStreamsRecyclerView"
+        android:id="@+id/audioStreamListRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        tools:context=".features.audiostream.AudioStreamListActivity" />
+        tools:context=".feature.audiostream.AudioStreamListActivity" />
 
-    <com.google.android.libraries.cast.companionlibrary.widgets.MiniController
-        android:id="@+id/currentStreamMiniController"
+    <ImageButton
+        android:id="@+id/togglePlayStopButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:contentDescription="@string/toggle_play_stop"
+        android:src="@android:drawable/ic_media_pause"
         android:visibility="gone"
-        app:auto_setup="true" />
+        tools:visibility="visible" />
 
 </RelativeLayout>
 

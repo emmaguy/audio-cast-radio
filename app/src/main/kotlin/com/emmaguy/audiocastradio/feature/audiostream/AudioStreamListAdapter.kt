@@ -1,4 +1,4 @@
-package com.emmaguy.audiocastradio.features.audiostream
+package com.emmaguy.audiocastradio.feature.audiostream
 
 import android.content.res.Resources
 import android.graphics.Color
@@ -8,12 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.emmaguy.audiocastradio.R
+import com.emmaguy.audiocastradio.data.AudioStream
+import com.jakewharton.rxrelay.BehaviorRelay
 import com.jakewharton.rxrelay.PublishRelay
 import java.util.*
 
-internal class AudioStreamListAdapter(val audioStreams: List<AudioStream>,
-                                      val onAudioStreamClickedRelay: PublishRelay<AudioStream>,
-                                      val resources: Resources)
+class AudioStreamListAdapter(val audioStreams: List<AudioStream>,
+                             val onAudioStreamClickedRelay: BehaviorRelay<AudioStream>,
+                             val resources: Resources)
 : RecyclerView.Adapter<AudioStreamListAdapter.AudioStreamViewHolder>() {
     private val assignedColours = ArrayList<Int>()
 
@@ -48,7 +50,7 @@ internal class AudioStreamListAdapter(val audioStreams: List<AudioStream>,
 
     class AudioStreamViewHolder(itemView: View,
                                 val audioStreams: List<AudioStream>,
-                                val onAudioStreamClickedRelay: PublishRelay<AudioStream>,
+                                val onAudioStreamClickedRelay: BehaviorRelay<AudioStream>,
                                 val assignedColours: ArrayList<Int>) : RecyclerView.ViewHolder(itemView) {
         private val titleTextView: TextView = itemView.findViewById(R.id.audioStreamTitle) as TextView
 

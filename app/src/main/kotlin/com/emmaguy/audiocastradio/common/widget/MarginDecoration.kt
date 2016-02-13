@@ -1,4 +1,4 @@
-package com.emmaguy.audiocastradio.features.audiostream
+package com.emmaguy.audiocastradio.common.widget
 
 import android.graphics.Rect
 import android.support.v7.widget.RecyclerView

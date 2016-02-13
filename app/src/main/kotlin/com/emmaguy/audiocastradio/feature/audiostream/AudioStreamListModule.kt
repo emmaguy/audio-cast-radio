@@ -1,9 +1,12 @@
-package com.emmaguy.audiocastradio.features.audiostream
+package com.emmaguy.audiocastradio.feature.audiostream
 
 import com.emmaguy.audiocastradio.AppModule
+import com.emmaguy.audiocastradio.data.AudioStream
 
 class AudioStreamListModule(val appModule: AppModule) {
-    internal val audioStreamsPresenter = AudioStreamListPresenter(audioStreams(), appModule.onCastCapabilityInitialised)
+    internal val audioStreamsPresenter = AudioStreamListPresenter(audioStreams(),
+            appModule.onCastStateChanged,
+            appModule.castManager)
 
     private fun audioStreams(): List<AudioStream> {
         return listOf(

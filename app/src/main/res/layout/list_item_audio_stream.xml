@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.emmaguy.audiocastradio.features.audiostream.SquareRelativeLayout
+<com.emmaguy.audiocastradio.common.widget.SquareRelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -18,4 +18,4 @@
         android:textSize="22sp"
         tools:text="hi" />
 
-</com.emmaguy.audiocastradio.features.audiostream.SquareRelativeLayout>
+</com.emmaguy.audiocastradio.common.widget.SquareRelativeLayout>

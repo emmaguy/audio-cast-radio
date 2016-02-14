@@ -25,12 +25,6 @@ import org.junit.runner.RunWith
 class AudioStreamListActivityTest {
     @Rule @JvmField val rule = ActivityTestRule(AudioStreamListActivity::class.java)
 
-    @Test fun listOfAudioStreamsIsVisible() {
-        onView(withId(R.id.audioStreamListRecyclerView)).check(matches(isDisplayed()));
-
-        Spoon.screenshot(rule.activity, "audio_stream_list")
-    }
-
     @Test fun onConnectedAndAudioStreamClicked_showLoadingUntilPlayingThenShowPause() {
         Spoon.screenshot(rule.activity, "audio_stream_list_idle")
 
@@ -42,9 +36,10 @@ class AudioStreamListActivityTest {
         onView(withId(R.id.audioStreamListProgressBar)).check(matches(isDisplayed()));
 
         App.instance.appModule.onCastStateChanged.call(CastState(true, MediaState.PLAYING, null, null))
-        Spoon.screenshot(rule.activity, "audio_stream_list_playing")
 
         onView(withId(R.id.audioStreamListProgressBar)).check(matches(not(isDisplayed())));
         onView(withId(R.id.audioStreamListTogglePlayPauseButton)).check(matches(isDisplayed()));
+
+        Spoon.screenshot(rule.activity, "audio_stream_list_playing")
     }
 }

@@ -1,15 +1,17 @@
 package com.emmaguy.audiocastradio.feature.audiostream
 
-import com.emmaguy.audiocastradio.feature.CastManager
-import com.emmaguy.audiocastradio.data.CastState
-import com.emmaguy.audiocastradio.data.MediaState
 import com.emmaguy.audiocastradio.base.AbstractPresenter
 import com.emmaguy.audiocastradio.data.AudioStream
+import com.emmaguy.audiocastradio.data.CastState
+import com.emmaguy.audiocastradio.data.MediaState
+import com.emmaguy.audiocastradio.feature.CastManager
 import com.jakewharton.rxrelay.BehaviorRelay
 import rx.Observable
+import rx.Scheduler
 import timber.log.Timber
 
-class AudioStreamListPresenter(val audioStreams: List<AudioStream>,
+class AudioStreamListPresenter(val uiScheduler: Scheduler,
+                               val audioStreams: List<AudioStream>,
                                val onCastStateChanged: BehaviorRelay<CastState>,
                                val castManager: CastManager)
 : AbstractPresenter<AudioStreamListPresenter.View>() {
@@ -34,6 +36,7 @@ class AudioStreamListPresenter(val audioStreams: List<AudioStream>,
 
         val castStateChanged = onCastStateChanged
                 .doOnNext { Timber.d("Cast state: " + it.mediaState + " is connected: " + it.isConnected) }
+                .observeOn(uiScheduler)
                 .doOnNext {
                     if (it.mediaState == MediaState.UNKNOWN || it.mediaState == MediaState.IDLE) {
                         view.hidePlayStopStreamView()
@@ -42,6 +45,7 @@ class AudioStreamListPresenter(val audioStreams: List<AudioStream>,
 
         unsubscribeOnDetach(Observable.combineLatest(view.onAudioStreamClicked(), castStateChanged,
                 { audioStream, castState -> Pair(castState, audioStream) })
+                .observeOn(uiScheduler)
                 .subscribe({ pair ->
                     val castState = pair.first
                     val audioStream = pair.second

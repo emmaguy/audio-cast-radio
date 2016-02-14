@@ -28,7 +28,7 @@ class AudioStreamListActivity(val module: AudioStreamListModule = AudioStreamLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        togglePlayStopButton.setOnClickListener { onStopAudioStreamClickedRelay.call(Unit) }
+        audioStreamListTogglePlayPauseButton.setOnClickListener { onStopAudioStreamClickedRelay.call(Unit) }
     }
 
     override fun getLayoutId(): Int {
@@ -86,17 +86,17 @@ class AudioStreamListActivity(val module: AudioStreamListModule = AudioStreamLis
     }
 
     override fun showPauseStreamView() {
-        togglePlayStopButton.visibility = View.VISIBLE
-        togglePlayStopButton.setImageResource(android.R.drawable.ic_media_pause)
+        audioStreamListTogglePlayPauseButton.visibility = View.VISIBLE
+        audioStreamListTogglePlayPauseButton.setImageResource(android.R.drawable.ic_media_pause)
     }
 
     override fun showPlayStreamView() {
-        togglePlayStopButton.visibility = View.VISIBLE
-        togglePlayStopButton.setImageResource(android.R.drawable.ic_media_play)
+        audioStreamListTogglePlayPauseButton.visibility = View.VISIBLE
+        audioStreamListTogglePlayPauseButton.setImageResource(android.R.drawable.ic_media_play)
     }
 
     override fun hidePlayStopStreamView() {
-        togglePlayStopButton.visibility = View.GONE
+        audioStreamListTogglePlayPauseButton.visibility = View.GONE
     }
 
     companion object {

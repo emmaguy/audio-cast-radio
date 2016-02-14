@@ -4,7 +4,9 @@ import com.emmaguy.audiocastradio.AppModule
 import com.emmaguy.audiocastradio.data.AudioStream
 
 class AudioStreamListModule(val appModule: AppModule) {
-    internal val audioStreamsPresenter = AudioStreamListPresenter(audioStreams(),
+    internal val audioStreamsPresenter = AudioStreamListPresenter(
+            appModule.uiScheduler,
+            audioStreams(),
             appModule.onCastStateChanged,
             appModule.castManager)
 

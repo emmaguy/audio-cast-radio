@@ -15,11 +15,13 @@ import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager
 import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumerImpl
 import com.jakewharton.rxrelay.BehaviorRelay
 import org.json.JSONObject
+import rx.android.schedulers.AndroidSchedulers
 import java.util.*
 
 class AppModule(val app: App) {
     val onCastStateChanged: BehaviorRelay<CastState> = BehaviorRelay.create()
     val resources = app.resources
+    val uiScheduler = AndroidSchedulers.mainThread()
 
     private val videoCastManager = castManager(app, resources)
     val castManager: CastManager = object : CastManager {

@@ -23,12 +23,12 @@ class AudioStreamListActivity(val module: AudioStreamListModule = AudioStreamLis
                               val castManager: CastManager = module.appModule.castManager,
                               val res: Resources = module.appModule.resources) :
         AbstractActivity<AudioStreamListPresenter.View>(), AudioStreamListPresenter.View {
-    private val onStopAudioStreamClickedRelay: PublishRelay<Unit> = PublishRelay.create()
+    private val onPlayPauseAudioStreamClickedRelay: PublishRelay<Unit> = PublishRelay.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        audioStreamListTogglePlayPauseButton.setOnClickListener { onStopAudioStreamClickedRelay.call(Unit) }
+        audioStreamListTogglePlayPauseButton.setOnClickListener { onPlayPauseAudioStreamClickedRelay.call(Unit) }
     }
 
     override fun getLayoutId(): Int {
@@ -47,8 +47,8 @@ class AudioStreamListActivity(val module: AudioStreamListModule = AudioStreamLis
         return onAudioStreamClickedRelay
     }
 
-    override fun onTogglePlayStopAudioStreamClicked(): Observable<Unit> {
-        return onStopAudioStreamClickedRelay
+    override fun onTogglePlayPauseAudioStreamClicked(): Observable<Unit> {
+        return onPlayPauseAudioStreamClickedRelay
     }
 
     override fun getPresenter(): AbstractPresenter<AudioStreamListPresenter.View> {
@@ -95,7 +95,7 @@ class AudioStreamListActivity(val module: AudioStreamListModule = AudioStreamLis
         audioStreamListTogglePlayPauseButton.setImageResource(android.R.drawable.ic_media_play)
     }
 
-    override fun hidePlayStopStreamView() {
+    override fun hidePlayPauseStreamView() {
         audioStreamListTogglePlayPauseButton.visibility = View.GONE
     }
 

@@ -16,7 +16,7 @@ class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresen
     private val onCastStateChanged: BehaviorRelay<CastState> = BehaviorRelay.create()
 
     private val audioStreamClicked: PublishRelay<AudioStream> = PublishRelay.create()
-    private val togglePlayStopAudioStreamClicked: PublishRelay<Unit> = PublishRelay.create()
+    private val togglePlayPauseAudioStreamClicked: PublishRelay<Unit> = PublishRelay.create()
 
     @Mock private val castManager: CastManager? = null
 
@@ -30,7 +30,7 @@ class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresen
     override fun createView(): AudioStreamListPresenter.View {
         val view = mock(AudioStreamListPresenter.View::class.java)
         `when`(view.onAudioStreamClicked()).thenReturn(audioStreamClicked)
-        `when`(view.onTogglePlayStopAudioStreamClicked()).thenReturn(togglePlayStopAudioStreamClicked)
+        `when`(view.onTogglePlayPauseAudioStreamClicked()).thenReturn(togglePlayPauseAudioStreamClicked)
         return view
     }
 
@@ -64,7 +64,7 @@ class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresen
         verify(castManager, never())?.loadStream(anyObject())
     }
 
-    @Test fun whenConnectedAndPlayingAndStreamClicked_hidesLoadingViewAndShowStopStreamView() {
+    @Test fun whenConnectedAndPlayingAndStreamClicked_hidesLoadingViewAndShowPauseStreamView() {
         presenterOnAttachView()
 
         audioStreamClicked.call(AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL))
@@ -83,75 +83,73 @@ class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresen
         verify(getView()).showPlayStreamView()
     }
 
-    @Test fun whenNotConnectedAndIdle_hidePlayStopStreamView() {
+    @Test fun whenNotConnectedAndIdle_hidePlayPauseStreamView() {
         presenterOnAttachView()
 
         onCastStateChanged.call(CastState(false, MediaState.IDLE, null, null))
 
-        verify(getView()).hidePlayStopStreamView()
+        verify(getView()).hidePlayPauseStreamView()
     }
 
-    @Test fun whenNotConnectedAndInUnknownState_hidePlayStopStreamView() {
+    @Test fun whenNotConnectedAndInUnknownState_hidePlayPauseStreamView() {
         presenterOnAttachView()
 
         onCastStateChanged.call(CastState(false, MediaState.UNKNOWN, null, null))
 
-        verify(getView()).hidePlayStopStreamView()
+        verify(getView()).hidePlayPauseStreamView()
     }
 
-    @Test fun whenOnTogglePlayStopAudioStreamClickedAndNotConnected_doesNothingToCastManager() {
+    @Test fun whenOnTogglePlayPauseAudioStreamClickedAndNotConnected_doesNothingToCastManager() {
         presenterOnAttachView()
 
-        togglePlayStopAudioStreamClicked.call(Unit)
+        togglePlayPauseAudioStreamClicked.call(Unit)
         onCastStateChanged.call(CastState(false, MediaState.UNKNOWN, null, null))
 
         verifyZeroInteractions(castManager)
     }
 
-    @Test fun whenOnTogglePlayStopAudioStreamClickedAndConnectedAndIdle_doesNothingToCastManager() {
+    @Test fun whenOnTogglePlayPauseAudioStreamClickedAndConnectedAndIdle_doesNothingToCastManager() {
         presenterOnAttachView()
 
-        togglePlayStopAudioStreamClicked.call(Unit)
+        togglePlayPauseAudioStreamClicked.call(Unit)
         onCastStateChanged.call(CastState(true, MediaState.IDLE, null, null))
 
         verifyZeroInteractions(castManager)
     }
 
-    @Test fun whenOnTogglePlayStopAudioStreamClickedAndConnectedAndUnknown_doesNothingToCastManager() {
+    @Test fun whenOnTogglePlayPauseAudioStreamClickedAndConnectedAndUnknown_doesNothingToCastManager() {
         presenterOnAttachView()
 
-        togglePlayStopAudioStreamClicked.call(Unit)
+        togglePlayPauseAudioStreamClicked.call(Unit)
         onCastStateChanged.call(CastState(true, MediaState.UNKNOWN, null, null))
 
         verifyZeroInteractions(castManager)
     }
 
-    @Test fun whenOnTogglePlayStopAudioStreamClickedAndConnectedAndBuffering_doesNothingToCastManager() {
+    @Test fun whenOnTogglePlayPauseAudioStreamClickedAndConnectedAndBuffering_doesNothingToCastManager() {
         presenterOnAttachView()
 
         onCastStateChanged.call(CastState(true, MediaState.BUFFERING, null, null))
-        togglePlayStopAudioStreamClicked.call(Unit)
+        togglePlayPauseAudioStreamClicked.call(Unit)
 
         verifyZeroInteractions(castManager)
     }
 
-    @Test fun whenOnTogglePlayStopAudioStreamClickedAndConnectedAndPlaying_pausesOnCastManager() {
+    @Test fun whenOnTogglePlayPauseAudioStreamConnectedAndPlaying_pausesOnCastManager() {
         presenterOnAttachView()
 
-        audioStreamClicked.call(AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL))
         onCastStateChanged.call(CastState(true, MediaState.PLAYING, null, null))
-        togglePlayStopAudioStreamClicked.call(Unit)
+        togglePlayPauseAudioStreamClicked.call(Unit)
 
         verify(castManager)?.pause()
         verify(getView()).showPauseStreamView()
     }
 
-    @Test fun whenOnTogglePlayStopAudioStreamClickedAndConnectedAndPaused_playsOnCastManager() {
+    @Test fun whenOnTogglePlayPauseAudioStreamConnectedAndPaused_playsOnCastManager() {
         presenterOnAttachView()
 
-        audioStreamClicked.call(AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL))
         onCastStateChanged.call(CastState(true, MediaState.PAUSED, null, null))
-        togglePlayStopAudioStreamClicked.call(Unit)
+        togglePlayPauseAudioStreamClicked.call(Unit)
 
         verify(castManager)?.play()
         verify(getView()).showPlayStreamView()

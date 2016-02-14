@@ -20,7 +20,7 @@ class AudioStreamListPresenter(val uiScheduler: Scheduler,
 
         view.setAudioStreams(audioStreams)
 
-        unsubscribeOnDetach(view.onTogglePlayStopAudioStreamClicked()
+        unsubscribeOnDetach(view.onTogglePlayPauseAudioStreamClicked()
                 .subscribe({
                     val castState = onCastStateChanged.value
                     if (castState != null && castState.isConnected) {
@@ -30,16 +30,18 @@ class AudioStreamListPresenter(val uiScheduler: Scheduler,
                             castManager.play()
                         }
                     }
-                }, { throwable -> Timber.e(throwable, "Failure when toggle play/stop clicked") }))
+                }, { throwable -> Timber.e(throwable, "Failure when toggle play/pause clicked") }))
 
         val castStateChanged = onCastStateChanged
                 .doOnNext { Timber.d("Cast state: " + it.mediaState + " is connected: " + it.isConnected) }
                 .observeOn(uiScheduler)
                 .doOnNext {
                     if (it.mediaState == MediaState.UNKNOWN || it.mediaState == MediaState.IDLE) {
-                        view.hidePlayStopStreamView()
+                        view.hidePlayPauseStreamView()
                     } else if (it.mediaState == MediaState.PLAYING) {
                         view.showPauseStreamView()
+                    } else if (it.mediaState == MediaState.PAUSED) {
+                        view.showPlayStreamView()
                     }
                 }
 
@@ -56,8 +58,6 @@ class AudioStreamListPresenter(val uiScheduler: Scheduler,
                             view.showLoadingView()
                         } else if (castState.mediaState == MediaState.PLAYING) {
                             view.hideLoadingView()
-                        } else if (castState.mediaState == MediaState.PAUSED) {
-                            view.showPlayStreamView()
                         }
                     }
                 }, { throwable -> Timber.e(throwable, "Failure when trying to start audio stream") }))
@@ -71,9 +71,9 @@ class AudioStreamListPresenter(val uiScheduler: Scheduler,
 
         fun showPauseStreamView()
         fun showPlayStreamView()
-        fun hidePlayStopStreamView()
+        fun hidePlayPauseStreamView()
 
         fun onAudioStreamClicked(): Observable<AudioStream>
-        fun onTogglePlayStopAudioStreamClicked(): Observable<Unit>
+        fun onTogglePlayPauseAudioStreamClicked(): Observable<Unit>
     }
 }

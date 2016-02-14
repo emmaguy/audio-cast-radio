@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'spoon'
+apply plugin: 'io.fabric'
 
 def environmentVariableOrDefault(envVariableName, defaultValue) {
     def envVariableValue = System.getenv(envVariableName)
@@ -14,7 +15,16 @@ def environmentVariableOrDefault(envVariableName, defaultValue) {
 }
 
 def gitCommitCount = "git rev-list HEAD --count".execute().text
+def currentBranch = "git --git-dir=${rootDir}/.git --work-tree=${rootDir}/..rev-parse --abbrev-ref HEAD".execute().text.trim()
+def gitSha() {
+    def p = 'git rev-parse --short HEAD'.execute([], project.rootDir)
+    p.waitFor()
+    if (p.exitValue() != 0) {
+        throw new RuntimeException(p.errorStream.text)
+    }
 
+    return p.text.trim()
+}
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -25,6 +35,9 @@ android {
         targetSdkVersion 23
         versionCode gitCommitCount.toInteger()
         versionName "1.0"
+
+        buildConfigField 'String', 'GIT_SHA', "\"${gitSha()}\""
+        ext.betaDistributionReleaseNotes = "Current branch: ${currentBranch}"
 
         testInstrumentationRunner "com.emmaguy.audiocastradio.AudioCastTestRunner"
     }
@@ -80,6 +93,11 @@ dependencies {
     // Logging
     compile 'com.jakewharton.timber:timber:4.1.0'
 
+    // Crashlytics
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+        transitive = true;
+    }
+
     // Unit tests
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.0.34-beta'
@@ -112,6 +130,7 @@ buildscript {
 }
 repositories {
     mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 /*

@@ -8,6 +8,9 @@ dependencies:
     - echo y | android update sdk --no-ui --all --filter "tools,platform-tools,android-23"
     - echo y | android update sdk --no-ui --all --filter "build-tools-23.0.2,extra-google-m2repository,extra-google-google_play_services,extra-android-support"
     - ANDROID_HOME=/usr/local/android-sdk-linux ./gradlew dependencies
+    # Copy from environment variables to fabric.properties
+    - echo "apiKey=$FABRIC_API_KEY" >> app/fabric.properties
+    - echo "apiSecret=$FABRIC_API_SECRET" >> app/fabric.properties
 
 test:
   override:
@@ -38,3 +41,5 @@ test:
     - cp -r app/build/spoon/internal/debug/* $CIRCLE_TEST_REPORTS/espresso/
     # Copy the build outputs to artifacts
     - cp -r app/build/outputs $CIRCLE_ARTIFACTS
+    # Upload build to Fabric
+    - ./gradlew assembleProductionDebug crashlyticsUploadDistributionProductionDebug

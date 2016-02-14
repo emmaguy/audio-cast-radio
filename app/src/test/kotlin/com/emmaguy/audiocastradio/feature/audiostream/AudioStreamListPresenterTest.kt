@@ -10,6 +10,7 @@ import com.jakewharton.rxrelay.PublishRelay
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
+import rx.schedulers.Schedulers
 
 class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresenter, AudioStreamListPresenter.View>() {
     private val onCastStateChanged: BehaviorRelay<CastState> = BehaviorRelay.create()
@@ -20,7 +21,8 @@ class AudioStreamListPresenterTest : AbstractPresenterTest<AudioStreamListPresen
     @Mock private val castManager: CastManager? = null
 
     override fun createPresenter(): AudioStreamListPresenter {
-        return AudioStreamListPresenter(listOf(AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)),
+        return AudioStreamListPresenter(Schedulers.immediate(),
+                listOf(AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)),
                 onCastStateChanged,
                 castManager!!)
     }

@@ -22,13 +22,6 @@ data class AudioStream(val title: String, val streamUrl: String, var imageUrl: S
     }
 
     companion object {
-        fun isFromApp(customData: JSONObject?): Boolean {
-            if (customData == null) {
-                return false
-            }
-            return customData.has(KEY_APP_NAME) && customData.getString(KEY_APP_NAME).equals(VALUE_APP_NAME)
-        }
-
         private val KEY_APP_NAME = "app_name"
         private val VALUE_APP_NAME = BuildConfig.APPLICATION_ID
     }

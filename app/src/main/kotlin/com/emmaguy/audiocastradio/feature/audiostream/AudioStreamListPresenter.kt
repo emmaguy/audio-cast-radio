@@ -15,8 +15,6 @@ class AudioStreamListPresenter(val uiScheduler: Scheduler,
                                val onCastStateChanged: BehaviorRelay<CastState>,
                                val castManager: CastManager)
 : AbstractPresenter<AudioStreamListPresenter.View>() {
-    private var lastKnownCastState: CastState? = null
-
     override fun onAttachView(view: View) {
         super.onAttachView(view)
 
@@ -24,7 +22,7 @@ class AudioStreamListPresenter(val uiScheduler: Scheduler,
 
         unsubscribeOnDetach(view.onTogglePlayStopAudioStreamClicked()
                 .subscribe({
-                    val castState = lastKnownCastState
+                    val castState = onCastStateChanged.value
                     if (castState != null && castState.isConnected) {
                         if (castState.mediaState == MediaState.PLAYING) {
                             castManager.pause()
@@ -40,6 +38,8 @@ class AudioStreamListPresenter(val uiScheduler: Scheduler,
                 .doOnNext {
                     if (it.mediaState == MediaState.UNKNOWN || it.mediaState == MediaState.IDLE) {
                         view.hidePlayStopStreamView()
+                    } else if (it.mediaState == MediaState.PLAYING) {
+                        view.showPauseStreamView()
                     }
                 }
 
@@ -50,14 +50,12 @@ class AudioStreamListPresenter(val uiScheduler: Scheduler,
                     val castState = pair.first
                     val audioStream = pair.second
 
-                    lastKnownCastState = castState
                     if (castState.isConnected) {
-                        if (castState.mediaState == MediaState.IDLE) {
+                        if (castState.mediaState == MediaState.IDLE && audioStream != null) {
                             castManager.loadStream(audioStream)
                             view.showLoadingView()
                         } else if (castState.mediaState == MediaState.PLAYING) {
                             view.hideLoadingView()
-                            view.showPauseStreamView()
                         } else if (castState.mediaState == MediaState.PAUSED) {
                             view.showPlayStreamView()
                         }

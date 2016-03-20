@@ -1,13 +1,12 @@
 package com.emmaguy.audiocastradio.feature.audiostream
 
-import android.content.res.Resources
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.view.Menu
 import android.view.View
-import com.emmaguy.audiocastradio.App
-import com.emmaguy.audiocastradio.feature.CastManager
+import com.emmaguy.audiocastradio.AppComponent
+import com.emmaguy.audiocastradio.Inject
 import com.emmaguy.audiocastradio.R
 import com.emmaguy.audiocastradio.base.AbstractActivity
 import com.emmaguy.audiocastradio.base.AbstractPresenter
@@ -18,12 +17,10 @@ import com.jakewharton.rxrelay.PublishRelay
 import kotlinx.android.synthetic.main.activity_audio_streams.*
 import rx.Observable
 
-class AudioStreamListActivity(val module: AudioStreamListModule = AudioStreamListModule(App.instance.appModule),
-                              val presenter: AudioStreamListPresenter = module.audioStreamsPresenter,
-                              val castManager: CastManager = module.appModule.castManager,
-                              val res: Resources = module.appModule.resources) :
-        AbstractActivity<AudioStreamListPresenter.View>(), AudioStreamListPresenter.View {
+class AudioStreamListActivity() : AbstractActivity<AudioStreamListPresenter.View>(),
+        AudioStreamListPresenter.View, AppComponent by Inject.instance {
     private val onPlayPauseAudioStreamClickedRelay: PublishRelay<Unit> = PublishRelay.create()
+    private val presenter = AudioStreamListPresenter(uiScheduler, audioStreams, onCastStateChanged, castManager)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -3,28 +3,22 @@ package com.emmaguy.audiocastradio
 import android.content.Context
 import android.content.res.Resources
 import android.view.Menu
-import com.emmaguy.audiocastradio.feature.CastManager
+import com.emmaguy.audiocastradio.data.AudioStream
 import com.emmaguy.audiocastradio.data.CastState
 import com.emmaguy.audiocastradio.data.MediaState
-import com.emmaguy.audiocastradio.data.AudioStream
+import com.emmaguy.audiocastradio.feature.CastManager
 import com.emmaguy.audiocastradio.feature.audiostream.AudioStreamListActivity
 import com.google.android.gms.cast.ApplicationMetadata
 import com.google.android.gms.cast.MediaStatus
 import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager
 import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumerImpl
-import com.jakewharton.rxrelay.BehaviorRelay
 import org.json.JSONObject
-import rx.android.schedulers.AndroidSchedulers
 import java.util.*
 
-class AppModule(val app: App) {
-    val onCastStateChanged: BehaviorRelay<CastState> = BehaviorRelay.create()
-    val resources = app.resources
-    val uiScheduler = AndroidSchedulers.mainThread()
-
-    private val videoCastManager = castManager(app, resources)
-    val castManager: CastManager = object : CastManager {
+class AppComponentImpl(context: Context) : BaseAppComponent(context) {
+    private val videoCastManager = castManager(context, res)
+    override val castManager: CastManager = object : CastManager {
         override fun incrementUiCounter() {
             videoCastManager.incrementUiCounter()
         }

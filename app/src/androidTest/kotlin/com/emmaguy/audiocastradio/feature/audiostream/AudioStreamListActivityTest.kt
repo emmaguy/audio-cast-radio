@@ -11,6 +11,8 @@ import android.support.test.runner.AndroidJUnit4
 import android.support.v7.widget.RecyclerView
 import android.test.suitebuilder.annotation.LargeTest
 import com.emmaguy.audiocastradio.App
+import com.emmaguy.audiocastradio.Inject
+import com.emmaguy.audiocastradio.Injector
 import com.emmaguy.audiocastradio.R
 import com.emmaguy.audiocastradio.data.CastState
 import com.emmaguy.audiocastradio.data.MediaState
@@ -22,20 +24,20 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class AudioStreamListActivityTest {
+class AudioStreamListActivityTest : Injector by Inject.instance {
     @Rule @JvmField val rule = ActivityTestRule(AudioStreamListActivity::class.java)
 
     @Test fun onConnectedAndAudioStreamClicked_showLoadingUntilPlayingThenShowPause() {
         Spoon.screenshot(rule.activity, "audio_stream_list_idle")
 
-        App.instance.appModule.onCastStateChanged.call(CastState(true, MediaState.IDLE, null, null))
+        onCastStateChanged.call(CastState(true, MediaState.IDLE, null, null))
 
         onView(withId(R.id.audioStreamListRecyclerView)).perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()));
         Spoon.screenshot(rule.activity, "audio_stream_list_post_loading")
 
         onView(withId(R.id.audioStreamListProgressBar)).check(matches(isDisplayed()));
 
-        App.instance.appModule.onCastStateChanged.call(CastState(true, MediaState.PLAYING, null, null))
+        onCastStateChanged.call(CastState(true, MediaState.PLAYING, null, null))
 
         onView(withId(R.id.audioStreamListProgressBar)).check(matches(not(isDisplayed())));
         onView(withId(R.id.audioStreamListTogglePlayPauseButton)).check(matches(isDisplayed()));

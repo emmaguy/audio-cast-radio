@@ -11,11 +11,8 @@ import org.json.JSONObject
 import timber.log.Timber
 
 class App() : Application() {
-    val appModule by lazy { AppModule(this) }
-
     override fun onCreate() {
         super.onCreate()
-        instance = this;
 
         Fabric.with(this, Crashlytics());
         Crashlytics.setString("Git SHA", BuildConfig.GIT_SHA);
@@ -23,9 +20,10 @@ class App() : Application() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+        instantiateInjector()
     }
 
-    companion object {
-        lateinit var instance: App
+    fun instantiateInjector() {
+        Inject.instance = InjectorImpl(AppComponentImpl(this))
     }
 }

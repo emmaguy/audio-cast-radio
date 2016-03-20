@@ -12,9 +12,10 @@ dependencies:
     # Copy from environment variables to cast.properties
     - echo "castId=$CAST_APP_ID" >> app/cast.properties
 
-    # Esnure we have the right version of android downloaded
+    # Ensure we have the right version of android downloaded
     - echo y | android update sdk --no-ui --all --filter "tools,platform-tools,android-23"
-    - echo y | android update sdk --no-ui --all --filter "build-tools-23.0.2,extra-google-m2repository,extra-google-google_play_services,extra-android-support"
+    - echo y | android update sdk --no-ui --all --filter "build-tools-23.0.2"
+    - echo y | android update sdk --no-ui --all --filter "extra-google-m2repository,extra-google-google_play_services,extra-android-support"
     - ANDROID_HOME=/usr/local/android-sdk-linux ./gradlew dependencies
 
 test:

@@ -1,51 +1,59 @@
 # Build configuration for Circle CI
 machine:
+  java:
+    version: openjdk8
   environment:
     ANDROID_HOME: /usr/local/android-sdk-linux
 
 dependencies:
   pre:
-    # Copy from environment variables to fabric.properties
-    - echo "apiKey=$FABRIC_API_KEY" >> app/fabric.properties
-    - echo "apiSecret=$FABRIC_API_SECRET" >> app/fabric.properties
-
     # Copy from environment variables to cast.properties
     - echo "castId=$CAST_APP_ID" >> app/cast.properties
 
-    # Ensure we have the right version of android downloaded
-    - echo y | android update sdk --no-ui --all --filter "tools,platform-tools,android-23"
-    - echo y | android update sdk --no-ui --all --filter "build-tools-23.0.2"
+    # Android SDK Platform 25
+    - if [ ! -d "/usr/local/android-sdk-linux/platforms/android-25" ]; then echo y | android update sdk --no-ui --all --filter "android-25"; fi
+    # Android SDK Build-tools, revision 24.0.2
+    - if [ ! -d "/usr/local/android-sdk-linux/build-tools/24.0.2" ]; then echo y | android update sdk --no-ui --all --filter "build-tools-24.0.2"; fi
+    # Android Support Repository
+    - if [ ! -d "/usr/local/android-sdk-linux/extras/android/m2repository/com/android/support/design/25.0.0" ]; then echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"; fi
+
     - echo y | android update sdk --no-ui --all --filter "extra-google-m2repository,extra-google-google_play_services,extra-android-support"
-    - ANDROID_HOME=/usr/local/android-sdk-linux ./gradlew dependencies
+    - echo y | android update sdk -a -u -t sys-img-armeabi-v7a-google_apis-22
+  cache_directories:
+    - /usr/local/android-sdk-linux/platforms/android-25
+    - /usr/local/android-sdk-linux/build-tools/24.0.2
+    - /usr/local/android-sdk-linux/extras/android/m2repository
 
 test:
   override:
     # Run Unit tests
     - ./gradlew clean assemble test
 
+    # Copy unit test output
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - cp -r app/build/test-results/debug/* $CIRCLE_TEST_REPORTS/junit/
+
     # Run Espresso tests with Spoon
     # Create an sdcard for the emulator, for Spoon's screenshots to be saved to
-    - mksdcard -l e 512M sdcard.img
+    #- mksdcard -l e 512M sdcard.img
     # Start the emulator
-    - emulator -avd circleci-android22 -no-audio -no-window -sdcard sdcard.img:
-        background: true
-        parallel: true
+    #- echo no | android create avd -n custom-android22-googleapis -t "android-22" --abi google_apis/armeabi-v7a
+    #- android list avd
+    #- emulator -avd custom-android22-googleapis -no-audio -no-window -sdcard sdcard.img:
+    #        background: true
+    #        parallel: true
     # Wait for it to have booted
-    - circle-android wait-for-boot
+    #- circle-android wait-for-boot
     # Disable animations on the emulator
-    - adb shell settings put global window_animation_scale 0
-    - adb shell settings put global transition_animation_scale 0
-    - adb shell settings put global animator_duration_scale 0
+    #- adb shell settings put global window_animation_scale 0
+    #- adb shell settings put global transition_animation_scale 0
+    #- adb shell settings put global animator_duration_scale 0
     # Run the Espresso tests
-    - ./gradlew spoonInternalDebug
+    #- ./gradlew spoonDebug
   post:
-    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
-    - mkdir -p $CIRCLE_TEST_REPORTS/espresso/
-    # Copy unit test output
-    - cp -r app/build/test-results/internalDebug/* $CIRCLE_TEST_REPORTS/junit/
+    #- mkdir -p $CIRCLE_TEST_REPORTS/espresso/
+    
     # Copy Spoon output to the test results directory
-    - cp -r app/build/spoon/internal/debug/* $CIRCLE_TEST_REPORTS/espresso/
+    #- cp -r app/build/spoon/debug/* $CIRCLE_TEST_REPORTS/espresso/
     # Copy the build outputs to artifacts
     - cp -r app/build/outputs $CIRCLE_ARTIFACTS
-    # Upload build to Fabric
-    - ./gradlew assembleProductionDebug crashlyticsUploadDistributionProductionDebug

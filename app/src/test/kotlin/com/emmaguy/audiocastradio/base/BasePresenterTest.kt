@@ -5,8 +5,8 @@ import org.junit.Before
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 
-abstract class AbstractPresenterTest<P : AbstractPresenter<V>, V : AbstractPresenter.View> {
-    protected var presenter: AbstractPresenter<V>? = null
+abstract class BasePresenterTest<out P : BasePresenter<V>, V : BasePresenter.View> {
+    protected var presenter: BasePresenter<V>? = null
     private var view: V? = null
 
     @CallSuper @Before fun before() {
@@ -32,7 +32,7 @@ abstract class AbstractPresenterTest<P : AbstractPresenter<V>, V : AbstractPrese
     }
 
     protected fun <T> anyObject(): T {
-        Mockito.anyObject<T>()
+        Mockito.any<T>()
         return uninitialized()
     }
 

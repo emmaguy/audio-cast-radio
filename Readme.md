@@ -1,5 +1,7 @@
 # Audio Cast Radio
 
-Play some hardcoded Belgian radio stations on in-range Chromecast/Chromecast Audio devices.
+Play some Belgian radio stations on in-range Chromecast/Chromecast Audio devices.
  
-Uses [Cast Companion Library](https://github.com/googlecast/CastCompanionLibrary-android)
+Uses [Cast SDK v3](https://developers.google.com/cast/docs/android_sender_setup)
+
+<img src="preview.png" width="30%" />

@@ -3,7 +3,7 @@ package com.emmaguy.audiocastradio.base
 import rx.Subscription
 import rx.subscriptions.CompositeSubscription
 
-abstract class AbstractPresenter<in V : AbstractPresenter.View> {
+abstract class BasePresenter<in V : BasePresenter.View> {
     private val subscriptions: CompositeSubscription = CompositeSubscription()
     private var view: View? = null
 

@@ -11,39 +11,21 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+            android:value="com.emmaguy.audiocastradio.feature.CastOptionsProvider" />
 
         <activity
-            android:name=".feature.audiostream.AudioStreamListActivity"
-            android:launchMode="singleInstance">
+            android:name=".feature.audiostream.AudioStreamListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.google.android.libraries.cast.companionlibrary.remotecontrol.VideoIntentReceiver">
-            <intent-filter>
-                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-                <action android:name="com.google.android.libraries.cast.companionlibrary.action.stop" />
-                <action android:name="com.google.android.libraries.cast.companionlibrary.action.toggleplayback" />
-            </intent-filter>
-        </receiver>
-
-        <service
-            android:name="com.google.android.libraries.cast.companionlibrary.notification.VideoCastNotificationService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.android.libraries.cast.companionlibrary.action.stop" />
-                <action android:name="com.google.android.libraries.cast.companionlibrary.action.toggleplayback" />
-                <action android:name="com.google.android.libraries.cast.companionlibrary.action.notificationvisibility" />
-            </intent-filter>
-        </service>
-
-        <service android:name="com.google.android.libraries.cast.companionlibrary.cast.reconnection.ReconnectionService" />
     </application>
-
 </manifest>

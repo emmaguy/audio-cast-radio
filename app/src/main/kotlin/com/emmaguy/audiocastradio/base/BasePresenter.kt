@@ -1,10 +1,10 @@
 package com.emmaguy.audiocastradio.base
 
-import rx.Subscription
-import rx.subscriptions.CompositeSubscription
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 
 abstract class BasePresenter<in V : BasePresenter.View> {
-    private val subscriptions: CompositeSubscription = CompositeSubscription()
+    private val disposables: CompositeDisposable = CompositeDisposable()
     private var view: View? = null
 
     open fun onAttachView(view: V) {
@@ -21,11 +21,11 @@ abstract class BasePresenter<in V : BasePresenter.View> {
         }
 
         this.view = null
-        this.subscriptions.clear()
+        this.disposables.clear()
     }
 
-    protected fun unsubscribeOnDetach(subscription: Subscription) {
-        subscriptions.add(subscription)
+    protected fun unsubscribeOnDetach(disposable: Disposable) {
+        disposables.add(disposable)
     }
 
     interface View {

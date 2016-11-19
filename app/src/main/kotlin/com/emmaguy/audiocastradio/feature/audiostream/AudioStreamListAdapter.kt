@@ -9,14 +9,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.emmaguy.audiocastradio.R
 import com.emmaguy.audiocastradio.data.AudioStream
-import com.jakewharton.rxrelay.BehaviorRelay
-import com.jakewharton.rxrelay.PublishRelay
+import io.reactivex.subjects.BehaviorSubject
 import java.util.*
 
 class AudioStreamListAdapter(val audioStreams: List<AudioStream>,
-                             val onAudioStreamClickedRelay: BehaviorRelay<AudioStream>,
+                             val onAudioStreamClickedSubject: BehaviorSubject<AudioStream>,
                              val resources: Resources)
-: RecyclerView.Adapter<AudioStreamListAdapter.AudioStreamViewHolder>() {
+    : RecyclerView.Adapter<AudioStreamListAdapter.AudioStreamViewHolder>() {
     private val assignedColours = ArrayList<Int>()
 
     init {
@@ -45,17 +44,17 @@ class AudioStreamListAdapter(val audioStreams: List<AudioStream>,
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioStreamViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_audio_stream, parent, false)
-        return AudioStreamViewHolder(view, audioStreams, onAudioStreamClickedRelay, assignedColours)
+        return AudioStreamViewHolder(view, audioStreams, onAudioStreamClickedSubject, assignedColours)
     }
 
     class AudioStreamViewHolder(itemView: View,
                                 val audioStreams: List<AudioStream>,
-                                val onAudioStreamClickedRelay: BehaviorRelay<AudioStream>,
+                                val onAudioStreamClickedSubject: BehaviorSubject<AudioStream>,
                                 val assignedColours: ArrayList<Int>) : RecyclerView.ViewHolder(itemView) {
         private val titleTextView: TextView = itemView.findViewById(R.id.audioStreamTitle) as TextView
 
         init {
-            itemView.setOnClickListener { onAudioStreamClickedRelay.call(audioStreams[adapterPosition]) }
+            itemView.setOnClickListener { onAudioStreamClickedSubject.onNext(audioStreams[adapterPosition]) }
         }
 
         fun setAudioStream(audioStream: AudioStream) {

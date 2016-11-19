@@ -11,15 +11,15 @@ import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.SessionManagerListener
-import com.jakewharton.rxrelay.BehaviorRelay
-import rx.android.schedulers.AndroidSchedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 
 class AppComponent(context: Context) : BaseComponent {
     override val res = context.resources
     override val uiScheduler = AndroidSchedulers.mainThread()
 
-    override val onCastStateChanged: BehaviorRelay<CastState> = BehaviorRelay.create()
+    override val onCastStateChanged: BehaviorSubject<CastState> = BehaviorSubject.create()
 
     override val audioStreams = listOf(
             AudioStream("Klara",
@@ -63,47 +63,47 @@ class AppComponent(context: Context) : BaseComponent {
     override val castSession: SessionManagerListener<CastSession> = object : SessionManagerListener<CastSession> {
         override fun onSessionResumed(castSession: CastSession?, wasSuspended: Boolean) {
             Timber.d("onSessionResumed")
-            onCastStateChanged.call(CastState(true))
+            onCastStateChanged.onNext(CastState(true))
         }
 
         override fun onSessionResuming(castSession: CastSession?, sessionId: String?) {
             Timber.d("onSessionResuming")
-            onCastStateChanged.call(CastState(false))
+            onCastStateChanged.onNext(CastState(false))
         }
 
         override fun onSessionEnded(castSession: CastSession?, error: Int) {
             Timber.d("onSessionEnded")
-            onCastStateChanged.call(CastState(false))
+            onCastStateChanged.onNext(CastState(false))
         }
 
         override fun onSessionStartFailed(castSession: CastSession?, error: Int) {
             Timber.d("onSessionStartFailed")
-            onCastStateChanged.call(CastState(false))
+            onCastStateChanged.onNext(CastState(false))
         }
 
         override fun onSessionStarting(castSession: CastSession?) {
             Timber.d("onSessionStarting")
-            onCastStateChanged.call(CastState(false))
+            onCastStateChanged.onNext(CastState(false))
         }
 
         override fun onSessionSuspended(castSession: CastSession?, reason: Int) {
             Timber.d("onSessionSuspended")
-            onCastStateChanged.call(CastState(false))
+            onCastStateChanged.onNext(CastState(false))
         }
 
         override fun onSessionStarted(castSession: CastSession?, error: String?) {
             Timber.d("onSessionStarted")
-            onCastStateChanged.call(CastState(true))
+            onCastStateChanged.onNext(CastState(true))
         }
 
         override fun onSessionEnding(castSession: CastSession?) {
             Timber.d("onSessionEnding")
-            onCastStateChanged.call(CastState(false))
+            onCastStateChanged.onNext(CastState(false))
         }
 
         override fun onSessionResumeFailed(castSession: CastSession?, error: Int) {
             Timber.d("onSessionResumeFailed")
-            onCastStateChanged.call(CastState(false))
+            onCastStateChanged.onNext(CastState(false))
         }
     }
 }

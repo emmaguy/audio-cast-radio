@@ -11,9 +11,9 @@ import com.emmaguy.audiocastradio.base.BasePresenter
 import com.emmaguy.audiocastradio.common.widget.MarginDecoration
 import com.emmaguy.audiocastradio.data.AudioStream
 import com.emmaguy.audiocastradio.di.Inject
-import com.jakewharton.rxrelay.BehaviorRelay
+import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.activity_audio_streams.*
-import rx.Observable
 
 class AudioStreamListActivity() : BaseActivity<AudioStreamListPresenter.View>(),
         AudioStreamListPresenter.View, BaseComponent by Inject.instance {
@@ -31,14 +31,14 @@ class AudioStreamListActivity() : BaseActivity<AudioStreamListPresenter.View>(),
 
     override fun setAudioStreams(audioStreams: List<AudioStream>) {
         audioStreamListRecyclerView.setHasFixedSize(true)
-        audioStreamListRecyclerView.adapter = AudioStreamListAdapter(audioStreams, onAudioStreamClickedRelay, res)
+        audioStreamListRecyclerView.adapter = AudioStreamListAdapter(audioStreams, audioStreamClickedSubject, res)
         audioStreamListRecyclerView.itemAnimator = DefaultItemAnimator()
         audioStreamListRecyclerView.layoutManager = GridLayoutManager(this, res.getInteger(R.integer.audio_stream_list_columns))
         audioStreamListRecyclerView.addItemDecoration(MarginDecoration(res.getDimensionPixelSize(R.dimen.item_audio_stream_list_margin)))
     }
 
     override fun onAudioStreamClicked(): Observable<AudioStream> {
-        return onAudioStreamClickedRelay
+        return audioStreamClickedSubject
     }
 
     override fun getPresenter(): BasePresenter<AudioStreamListPresenter.View> {
@@ -68,6 +68,6 @@ class AudioStreamListActivity() : BaseActivity<AudioStreamListPresenter.View>(),
     }
 
     companion object {
-        private val onAudioStreamClickedRelay: BehaviorRelay<AudioStream> = BehaviorRelay.create()
+        private val audioStreamClickedSubject: BehaviorSubject<AudioStream> = BehaviorSubject.create()
     }
 }

@@ -4,21 +4,21 @@ import com.emmaguy.audiocastradio.base.BasePresenterTest
 import com.emmaguy.audiocastradio.data.AudioStream
 import com.emmaguy.audiocastradio.data.CastState
 import com.emmaguy.audiocastradio.feature.CastManager
-import com.jakewharton.rxrelay.BehaviorRelay
-import com.jakewharton.rxrelay.PublishRelay
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
-import rx.schedulers.Schedulers
 
 class AudioStreamListPresenterTest : BasePresenterTest<AudioStreamListPresenter, AudioStreamListPresenter.View>() {
-    private val onCastStateChanged: BehaviorRelay<CastState> = BehaviorRelay.create()
-    private val audioStreamClicked: PublishRelay<AudioStream> = PublishRelay.create()
+    private val onCastStateChanged: BehaviorSubject<CastState> = BehaviorSubject.create()
+    private val audioStreamClicked: PublishSubject<AudioStream> = PublishSubject.create()
 
     @Mock private val castManager: CastManager? = null
 
     override fun createPresenter(): AudioStreamListPresenter {
-        return AudioStreamListPresenter(Schedulers.immediate(),
+        return AudioStreamListPresenter(Schedulers.trampoline(),
                 listOf(AudioStream(DEFAULT_TITLE, DEFAULT_URL, DEFAULT_IMAGE_URL)),
                 onCastStateChanged,
                 castManager!!)
@@ -40,7 +40,7 @@ class AudioStreamListPresenterTest : BasePresenterTest<AudioStreamListPresenter,
     @Test fun casting_noAudioStream_doesNothingToCastManager() {
         presenterOnAttachView()
 
-        onCastStateChanged.call(CastState(true))
+        onCastStateChanged.onNext(CastState(true))
 
         verifyZeroInteractions(castManager)
     }
@@ -48,7 +48,7 @@ class AudioStreamListPresenterTest : BasePresenterTest<AudioStreamListPresenter,
     @Test fun audioStreamChanged_notCasting_doesNothingToCastManager() {
         presenterOnAttachView()
 
-        audioStreamClicked.call(null)
+        audioStreamClicked.onNext(null)
 
         verifyZeroInteractions(castManager)
     }
@@ -57,8 +57,8 @@ class AudioStreamListPresenterTest : BasePresenterTest<AudioStreamListPresenter,
         presenterOnAttachView()
 
         val audioStream = AudioStream("title", "stream", "img")
-        audioStreamClicked.call(audioStream)
-        onCastStateChanged.call(CastState(true))
+        audioStreamClicked.onNext(audioStream)
+        onCastStateChanged.onNext(CastState(true))
 
         verify(castManager!!).loadStream(audioStream)
     }

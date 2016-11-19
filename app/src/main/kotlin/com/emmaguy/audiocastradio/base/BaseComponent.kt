@@ -7,15 +7,15 @@ import com.emmaguy.audiocastradio.feature.CastManager
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.OptionsProvider
 import com.google.android.gms.cast.framework.SessionManagerListener
-import com.jakewharton.rxrelay.BehaviorRelay
-import rx.Scheduler
+import io.reactivex.Scheduler
+import io.reactivex.subjects.BehaviorSubject
 
 interface BaseComponent {
     val res: Resources
 
     val uiScheduler: Scheduler
 
-    val onCastStateChanged: BehaviorRelay<CastState>
+    val onCastStateChanged: BehaviorSubject<CastState>
 
     val audioStreams: List<AudioStream>
 

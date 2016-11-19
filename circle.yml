@@ -48,7 +48,7 @@ test:
     - ./gradlew assembleDebugAndroidTest
 
     # Run Espresso in Firebase Test Lab
-    - echo "y" | sudo /opt/google-cloud-sdk/bin/gcloud beta test android run --app app/build/outputs/apk/app-debug.apk --test app/build/outputs/apk/app-debug-androidTest.apk
+    - echo "y" | sudo /opt/google-cloud-sdk/bin/gcloud beta test android run --app app/build/outputs/apk/app-debug.apk --test app/build/outputs/apk/app-debug-androidTest.apk --device-ids Nexus5
 
     # Gather Espresso test results
     - mkdir -p $CIRCLE_ARTIFACTS/espresso/

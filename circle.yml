@@ -12,48 +12,44 @@ dependencies:
 
     # Android SDK Platform 25
     - if [ ! -d "/usr/local/android-sdk-linux/platforms/android-25" ]; then echo y | android update sdk --no-ui --all --filter "android-25"; fi
-    # Android SDK Build-tools, revision 24.0.2
-    - if [ ! -d "/usr/local/android-sdk-linux/build-tools/24.0.2" ]; then echo y | android update sdk --no-ui --all --filter "build-tools-24.0.2"; fi
+    # Android SDK Build-tools, revision 25.0.0
+    - if [ ! -d "/usr/local/android-sdk-linux/build-tools/25.0.0" ]; then echo y | android update sdk --no-ui --all --filter "build-tools-25.0.0"; fi
     # Android Support Repository
-    - if [ ! -d "/usr/local/android-sdk-linux/extras/android/m2repository/com/android/support/design/25.0.0" ]; then echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"; fi
+    - if [ ! -d "/usr/local/android-sdk-linux/extras/android/m2repository/com/android/support/design/25.0.1" ]; then echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"; fi
 
     - echo y | android update sdk --no-ui --all --filter "extra-google-m2repository,extra-google-google_play_services,extra-android-support"
-    - echo y | android update sdk -a -u -t sys-img-armeabi-v7a-google_apis-22
+    - echo y | android update sdk -a -u -t sys-img-armeabi-v7a-google_apis-25
+
+    - sudo pip install -U crcmod
+  post:
+    - echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/client-secret.json
+    - sudo /opt/google-cloud-sdk/bin/gcloud config set project audio-cast-radio
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components install beta
+    - sudo /opt/google-cloud-sdk/bin/gcloud auth activate-service-account circleci@audio-cast-radio.iam.gserviceaccount.com --key-file ${HOME}/client-secret.json
   cache_directories:
     - /usr/local/android-sdk-linux/platforms/android-25
-    - /usr/local/android-sdk-linux/build-tools/24.0.2
+    - /usr/local/android-sdk-linux/build-tools/25.0.0
     - /usr/local/android-sdk-linux/extras/android/m2repository
 
 test:
   override:
-    # Run Unit tests
-    - ./gradlew clean assemble test
+    # Compile
+    - ./gradlew assembleDebug
+
+    # Run unit tests
+    - ./gradlew test
 
     # Copy unit test output
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
-    - cp -r app/build/test-results/debug/* $CIRCLE_TEST_REPORTS/junit/
+    - cp -r app/build/test-results/testDebugUnitTest/* $CIRCLE_TEST_REPORTS/junit/
 
-    # Run Espresso tests with Spoon
-    # Create an sdcard for the emulator, for Spoon's screenshots to be saved to
-    #- mksdcard -l e 512M sdcard.img
-    # Start the emulator
-    #- echo no | android create avd -n custom-android22-googleapis -t "android-22" --abi google_apis/armeabi-v7a
-    #- android list avd
-    #- emulator -avd custom-android22-googleapis -no-audio -no-window -sdcard sdcard.img:
-    #        background: true
-    #        parallel: true
-    # Wait for it to have booted
-    #- circle-android wait-for-boot
-    # Disable animations on the emulator
-    #- adb shell settings put global window_animation_scale 0
-    #- adb shell settings put global transition_animation_scale 0
-    #- adb shell settings put global animator_duration_scale 0
-    # Run the Espresso tests
-    #- ./gradlew spoonDebug
-  post:
-    #- mkdir -p $CIRCLE_TEST_REPORTS/espresso/
-    
-    # Copy Spoon output to the test results directory
-    #- cp -r app/build/spoon/debug/* $CIRCLE_TEST_REPORTS/espresso/
-    # Copy the build outputs to artifacts
-    - cp -r app/build/outputs $CIRCLE_ARTIFACTS
+    # Compile test apk for Espresso
+    - ./gradlew assembleDebugAndroidTest
+
+    # Run Espresso in Firebase Test Lab
+    - echo "y" | sudo /opt/google-cloud-sdk/bin/gcloud beta test android run --app app/build/outputs/apk/app-debug.apk --test app/build/outputs/apk/app-debug-androidTest.apk
+
+    # Gather Espresso test results
+    - mkdir -p $CIRCLE_ARTIFACTS/espresso/
+    - sudo /opt/google-cloud-sdk/bin/gsutil -m cp -r -U `sudo /opt/google-cloud-sdk/bin/gsutil ls gs://test-lab-jx4978yuch29c-yvvs849f9m01w | tail -1` $CIRCLE_ARTIFACTS/espresso/ | true

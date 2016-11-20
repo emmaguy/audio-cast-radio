@@ -2,13 +2,16 @@
 machine:
   java:
     version: openjdk8
-  environment:
-    ANDROID_HOME: /usr/local/android-sdk-linux
 
 dependencies:
   pre:
     # Copy from environment variables to cast.properties
     - echo "castId=$CAST_APP_ID" >> app/cast.properties
+
+    # Copy from environment variables to accept Android sdk licenses
+    - mkdir $ANDROID_HOME/licenses
+    - echo "$ANDROID_SDK_LICENSE" >> $ANDROID_HOME/licenses/android-sdk-license
+    - echo "$ANDROID_SDK_PREVIEW_LICENSE" >> $ANDROID_HOME/licenses/android-sdk-preview-license
 
     # Android SDK Platform 25
     - if [ ! -d "/usr/local/android-sdk-linux/platforms/android-25" ]; then echo y | android update sdk --no-ui --all --filter "android-25"; fi

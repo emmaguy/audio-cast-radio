@@ -49,6 +49,7 @@ dependencies {
     // Ui
     compile "com.android.support:appcompat-v7:$support_library_version"
     compile "com.android.support:recyclerview-v7:$support_library_version"
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
     // Kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

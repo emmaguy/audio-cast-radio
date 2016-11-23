@@ -36,7 +36,7 @@ android {
         resValue "string", "cast_app_id", readPropertyFromFile('castId', 'app/cast.properties')
         buildConfigField 'String', 'GIT_SHA', "\"${gitSha()}\""
 
-        testInstrumentationRunner "com.emmaguy.audiocastradio.AudioCastTestRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

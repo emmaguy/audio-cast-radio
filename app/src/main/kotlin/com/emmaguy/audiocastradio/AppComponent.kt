@@ -33,7 +33,10 @@ class AppComponent(context: Context) : BaseComponent {
                     "http://logowow.net/logos/thumb-70ASyo6ci.png"),
             AudioStream("Studio Brussel",
                     "http://mp3.streampower.be/stubru-high.mp3",
-                    "http://stubru.be/favicon.png"))
+                    "http://stubru.be/favicon.png"),
+            AudioStream("Gold",
+                    "http://media-sov.musicradio.com:80/GoldMP3",
+                    "https://pbs.twimg.com/profile_images/458919210215669760/XgF4N_yL_400x400.jpeg"))
     var castContext: CastContext? = null
 
     override val optionsProvider = CastOptionsProvider()

@@ -21,7 +21,6 @@ dependencies:
     - if [ ! -d "/usr/local/android-sdk-linux/extras/android/m2repository/com/android/support/design/25.0.1" ]; then echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"; fi
 
     - echo y | android update sdk --no-ui --all --filter "extra-google-m2repository,extra-google-google_play_services,extra-android-support"
-    - echo y | android update sdk -a -u -t sys-img-armeabi-v7a-google_apis-25
 
     - sudo pip install -U crcmod
   post:

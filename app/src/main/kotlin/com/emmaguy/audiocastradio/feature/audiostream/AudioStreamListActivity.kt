@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.view.Menu
+import android.view.View
 import com.emmaguy.audiocastradio.R
 import com.emmaguy.audiocastradio.base.BaseActivity
 import com.emmaguy.audiocastradio.base.BaseComponent
@@ -17,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_audio_streams.*
 
 class AudioStreamListActivity() : BaseActivity<AudioStreamListPresenter.View>(),
         AudioStreamListPresenter.View, BaseComponent by Inject.instance {
-    private val presenter = AudioStreamListPresenter(uiScheduler, audioStreams, onCastStateChanged, castManager)
+    private val presenter = AudioStreamListPresenter(uiScheduler, ioScheduler, audioStreamApi, onCastStateChanged, castManager, analyticsService)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +66,15 @@ class AudioStreamListActivity() : BaseActivity<AudioStreamListPresenter.View>(),
     override fun onPause() {
         castManager.onPause()
         super.onPause()
+    }
+
+
+    override fun showLoading() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    override fun hideLoading() {
+        progressBar.visibility = View.GONE
     }
 
     companion object {

@@ -2,23 +2,25 @@
 machine:
   java:
     version: openjdk8
+  environment:
+    ANDROID_PLATFORM: 25              # Should be kept in sync with cache_directories
+    ANDROID_BUILD_TOOLS: 25.0.2       # Should be kept in sync with cache_directories
+    ANDROID_SUPPORT_LIBRARY: 25.1.0
 
 dependencies:
   pre:
-    # Copy from environment variables to cast.properties
+    # Copy from environment variables to cast.properties and google-services.json
     - echo "castId=$CAST_APP_ID" >> app/cast.properties
+    - echo "$GOOGLE_PLAY_SERVICES_FILE" >> app/google-services.json
 
     # Copy from environment variables to accept Android sdk licenses
     - mkdir $ANDROID_HOME/licenses
     - echo "$ANDROID_SDK_LICENSE" >> $ANDROID_HOME/licenses/android-sdk-license
     - echo "$ANDROID_SDK_PREVIEW_LICENSE" >> $ANDROID_HOME/licenses/android-sdk-preview-license
 
-    # Android SDK Platform 25
-    - if [ ! -d "/usr/local/android-sdk-linux/platforms/android-25" ]; then echo y | android update sdk --no-ui --all --filter "android-25"; fi
-    # Android SDK Build-tools, revision 25.0.0
-    - if [ ! -d "/usr/local/android-sdk-linux/build-tools/25.0.0" ]; then echo y | android update sdk --no-ui --all --filter "build-tools-25.0.0"; fi
-    # Android Support Repository
-    - if [ ! -d "/usr/local/android-sdk-linux/extras/android/m2repository/com/android/support/design/25.0.1" ]; then echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"; fi
+    - if [ ! -d "/usr/local/android-sdk-linux/platforms/android-$ANDROID_PLATFORM" ]; then echo y | android update sdk --no-ui --all --filter "android-$ANDROID_PLATFORM"; fi
+    - if [ ! -d "/usr/local/android-sdk-linux/build-tools/$ANDROID_BUILD_TOOLS" ]; then echo y | android update sdk --no-ui --all --filter "build-tools-$ANDROID_BUILD_TOOLS"; fi
+    - if [ ! -d "/usr/local/android-sdk-linux/extras/android/m2repository/com/android/support/design/$ANDROID_SUPPORT_LIBRARY" ]; then echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"; fi
 
     - echo y | android update sdk --no-ui --all --filter "extra-google-m2repository,extra-google-google_play_services,extra-android-support"
 
@@ -31,7 +33,7 @@ dependencies:
     - sudo /opt/google-cloud-sdk/bin/gcloud auth activate-service-account circleci@audio-cast-radio.iam.gserviceaccount.com --key-file ${HOME}/client-secret.json
   cache_directories:
     - /usr/local/android-sdk-linux/platforms/android-25
-    - /usr/local/android-sdk-linux/build-tools/25.0.0
+    - /usr/local/android-sdk-linux/build-tools/25.0.2
     - /usr/local/android-sdk-linux/extras/android/m2repository
 
 test:

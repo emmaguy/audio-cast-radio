@@ -1,42 +1,61 @@
 package com.emmaguy.audiocastradio
 
 import android.content.Context
+import android.os.Bundle
 import android.view.Menu
+import com.emmaguy.audiocastradio.api.AudioStreamsApi
 import com.emmaguy.audiocastradio.base.BaseComponent
 import com.emmaguy.audiocastradio.data.AudioStream
+import com.emmaguy.audiocastradio.data.AudioStreamJsonAdapter
 import com.emmaguy.audiocastradio.data.CastState
+import com.emmaguy.audiocastradio.feature.AnalyticsService
 import com.emmaguy.audiocastradio.feature.CastManager
 import com.emmaguy.audiocastradio.feature.CastOptionsProvider
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.SessionManagerListener
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.FirebaseAnalytics.Event
+import com.google.firebase.analytics.FirebaseAnalytics.Param
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import com.squareup.moshi.Moshi
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
 
+
 class AppComponent(context: Context) : BaseComponent {
+    override val audioStreamApi: AudioStreamsApi
+        get() {
+            val retrofit = Retrofit.Builder()
+                    .baseUrl("https://raw.githubusercontent.com/emmaguy/audio-cast-radio/master/")
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder()
+                            .add(AudioStreamJsonAdapter())
+                            .build()))
+                    .build()
+
+            return retrofit.create<AudioStreamsApi>(AudioStreamsApi::class.java)
+        }
+
     override val res = context.resources
+    override val ioScheduler = Schedulers.io()
     override val uiScheduler = AndroidSchedulers.mainThread()
+    override val analyticsService: AnalyticsService = object : AnalyticsService {
+        override fun logStartCastingEvent(audioStream: AudioStream) {
+            val bundle = Bundle()
+            bundle.putString(Param.ITEM_ID, audioStream.streamUrl)
+            bundle.putString(Param.ITEM_NAME, audioStream.name)
+            FirebaseAnalytics.getInstance(context).logEvent(Event.SELECT_CONTENT, bundle)
+        }
+    }
 
     override val onCastStateChanged: BehaviorSubject<CastState> = BehaviorSubject.create()
 
-    override val audioStreams = listOf(
-            AudioStream("Klara",
-                    "http://mp3.streampower.be/klara-high.mp3",
-                    "https://static-media.streema.com/media/cache/a6/1f/a61fdf7e8d64646b773345e8a7e1d56e.jpg"),
-            AudioStream("Nostalgie",
-                    "http://nostalgiewhatafeeling.ice.infomaniak.ch/nostalgiewhatafeeling-128.mp3",
-                    "http://www.nostalgie.be/radioplayer/img/radios/premium.png"),
-            AudioStream("Radio 1",
-                    "http://mp3.streampower.be/radio1-high.mp3",
-                    "http://logowow.net/logos/thumb-70ASyo6ci.png"),
-            AudioStream("Studio Brussel",
-                    "http://mp3.streampower.be/stubru-high.mp3",
-                    "http://stubru.be/favicon.png"),
-            AudioStream("Gold",
-                    "http://media-sov.musicradio.com:80/GoldMP3",
-                    "https://pbs.twimg.com/profile_images/458919210215669760/XgF4N_yL_400x400.jpeg"))
     var castContext: CastContext? = null
 
     override val optionsProvider = CastOptionsProvider()
@@ -66,47 +85,48 @@ class AppComponent(context: Context) : BaseComponent {
     override val castSession: SessionManagerListener<CastSession> = object : SessionManagerListener<CastSession> {
         override fun onSessionResumed(castSession: CastSession?, wasSuspended: Boolean) {
             Timber.d("onSessionResumed")
-            onCastStateChanged.onNext(CastState(true))
+//            onCastStateChanged.onNext(CastState.fromId(castContext!!.castState))
+            onCastStateChanged.onNext(CastState.CONNECTED)
         }
 
         override fun onSessionResuming(castSession: CastSession?, sessionId: String?) {
             Timber.d("onSessionResuming")
-            onCastStateChanged.onNext(CastState(false))
+            onCastStateChanged.onNext(CastState.CONNECTING)
         }
 
         override fun onSessionEnded(castSession: CastSession?, error: Int) {
             Timber.d("onSessionEnded")
-            onCastStateChanged.onNext(CastState(false))
+            onCastStateChanged.onNext(CastState.NOT_CONNECTED)
         }
 
         override fun onSessionStartFailed(castSession: CastSession?, error: Int) {
             Timber.d("onSessionStartFailed")
-            onCastStateChanged.onNext(CastState(false))
+            onCastStateChanged.onNext(CastState.NOT_CONNECTED)
         }
 
         override fun onSessionStarting(castSession: CastSession?) {
             Timber.d("onSessionStarting")
-            onCastStateChanged.onNext(CastState(false))
+            onCastStateChanged.onNext(CastState.CONNECTING)
         }
 
         override fun onSessionSuspended(castSession: CastSession?, reason: Int) {
             Timber.d("onSessionSuspended")
-            onCastStateChanged.onNext(CastState(false))
+            onCastStateChanged.onNext(CastState.NOT_CONNECTED)
         }
 
         override fun onSessionStarted(castSession: CastSession?, error: String?) {
             Timber.d("onSessionStarted")
-            onCastStateChanged.onNext(CastState(true))
+            onCastStateChanged.onNext(CastState.CONNECTED)
         }
 
         override fun onSessionEnding(castSession: CastSession?) {
             Timber.d("onSessionEnding")
-            onCastStateChanged.onNext(CastState(false))
+            onCastStateChanged.onNext(CastState.NOT_CONNECTED)
         }
 
         override fun onSessionResumeFailed(castSession: CastSession?, error: Int) {
             Timber.d("onSessionResumeFailed")
-            onCastStateChanged.onNext(CastState(false))
+            onCastStateChanged.onNext(CastState.NOT_CONNECTED)
         }
     }
 }

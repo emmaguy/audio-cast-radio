@@ -58,7 +58,7 @@ class AudioStreamListAdapter(val audioStreams: List<AudioStream>,
         }
 
         fun setAudioStream(audioStream: AudioStream) {
-            titleTextView.text = audioStream.title
+            titleTextView.text = audioStream.name
             itemView.setBackgroundColor(assignedColours.elementAt(adapterPosition))
         }
     }

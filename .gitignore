@@ -7,3 +7,4 @@
 /captures
 
 app/cast.properties
+**/google-services.json

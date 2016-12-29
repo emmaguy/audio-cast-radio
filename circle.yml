@@ -39,20 +39,14 @@ dependencies:
 test:
   override:
     # Compile
-    - ./gradlew assembleDebug
-
-    # Run unit tests
-    - ./gradlew test
+    - ./gradlew test assembleDebug assembleDebugAndroidTest
 
     # Copy unit test output
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - cp -r app/build/test-results/testDebugUnitTest/* $CIRCLE_TEST_REPORTS/junit/
 
-    # Compile test apk for Espresso
-    - ./gradlew assembleDebugAndroidTest
-
     # Run Espresso in Firebase Test Lab
-    - echo "y" | sudo /opt/google-cloud-sdk/bin/gcloud beta test android run --app app/build/outputs/apk/app-debug.apk --test app/build/outputs/apk/app-debug-androidTest.apk --device-ids Nexus4,Nexus5,Nexus9,hammerhead
+    - echo "y" | sudo /opt/google-cloud-sdk/bin/gcloud beta test android run --app app/build/outputs/apk/app-debug.apk --test app/build/outputs/apk/app-debug-androidTest.apk --device-ids Nexus4,Nexus5,Nexus9
 
     # Gather Espresso test results
     - mkdir -p $CIRCLE_ARTIFACTS/espresso/

@@ -2,26 +2,31 @@
    {
       "name":"Klara",
       "stream_url":"http://mp3.streampower.be/klara-high.mp3",
-      "image_url":"https://static-media.streema.com/media/cache/a6/1f/a61fdf7e8d64646b773345e8a7e1d56e.jpg"
+      "image_url":"https://static-media.streema.com/media/cache/a6/1f/a61fdf7e8d64646b773345e8a7e1d56e.jpg",
+      "locale":"nl_BE"
    },
    {
       "name":"Nostalgie",
       "stream_url":"http://nostalgiewhatafeeling.ice.infomaniak.ch/nostalgiewhatafeeling-128.mp3",
-      "image_url":"http://www.nostalgie.be/radioplayer/img/radios/premium.png"
+      "image_url":"http://www.nostalgie.be/radioplayer/img/radios/premium.png",
+      "locale":"nl_BE"
    },
    {
-      "name":"Radio 1 (Belgium)",
+      "name":"Radio 1",
       "stream_url":"http://mp3.streampower.be/radio1-high.mp3",
-      "image_url":"http://logowow.net/logos/thumb-70ASyo6ci.png"
+      "image_url":"http://logowow.net/logos/thumb-70ASyo6ci.png",
+      "locale":"nl_BE"
    },
    {
       "name":"Studio Brussel",
       "stream_url":"http://mp3.streampower.be/stubru-high.mp3",
-      "image_url":"http://stubru.be/favicon.png"
+      "image_url":"http://stubru.be/favicon.png",
+      "locale":"nl_BE"
    },
    {
       "name":"Gold",
       "stream_url":"http://media-sov.musicradio.com:80/GoldMP3",
-      "image_url":"https://pbs.twimg.com/profile_images/458919210215669760/XgF4N_yL_400x400.jpeg"
+      "image_url":"https://pbs.twimg.com/profile_images/458919210215669760/XgF4N_yL_400x400.jpeg",
+      "locale":"en_GB"
    }
 ]

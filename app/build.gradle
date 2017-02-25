@@ -49,7 +49,7 @@ dependencies {
     // Ui
     compile "com.android.support:appcompat-v7:$support_library_version"
     compile "com.android.support:recyclerview-v7:$support_library_version"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0'
 
     // Kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -101,9 +101,9 @@ dependencies {
 }
 buildscript {
     ext.kotlin_version = '1.0.6'
-    ext.support_library_version = '25.1.1'
+    ext.support_library_version = '25.2.0'
     ext.espresso_version = '2.3-alpha'
-    ext.play_services_version = '10.0.1'
+    ext.play_services_version = '10.2.0'
     repositories {
         mavenCentral()
     }

@@ -5,7 +5,7 @@ machine:
   environment:
     ANDROID_PLATFORM: 25              # Should be kept in sync with cache_directories
     ANDROID_BUILD_TOOLS: 25.0.2       # Should be kept in sync with cache_directories
-    ANDROID_SUPPORT_LIBRARY: 25.1.0
+    ANDROID_SUPPORT_LIBRARY: 25.2.0
 
 dependencies:
   pre:

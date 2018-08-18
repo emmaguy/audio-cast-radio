@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.fabric'
 
 static String readPropertyFromFile(propertyName, fileName) {
     Properties properties = new Properties()
@@ -111,3 +112,5 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
     }
 }
+
+apply plugin: 'com.google.gms.google-services'

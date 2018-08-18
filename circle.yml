@@ -28,9 +28,11 @@ jobs:
     - run:
         name: Run unit tests and lint
         command: ./gradlew testDebug lintDebug
-#    - run:
-#        name: Run espresso tests
-#        command: gcloud firebase test android run --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk --device-ids Nexus5 --results-dir ${CIRCLE_JOB}-${CIRCLE_BUILD_NUM}
+    - run:
+        name: Run espresso tests
+        command: |
+          mkdir ${CIRCLE_JOB}-${CIRCLE_BUILD_NUM}
+          gcloud firebase test android run --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk --results-dir ${CIRCLE_JOB}-${CIRCLE_BUILD_NUM}
 
     # Save results
     - store_artifacts:

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">audio cast radio</string>
+    <string name="app_name">cast radio</string>
 
     <string name="cast_audio_menu_title">choose cast device</string>
 </resources>

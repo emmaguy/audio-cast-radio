@@ -31,8 +31,8 @@ jobs:
     - run:
         name: Run espresso tests
         command: |
-          mkdir ${CIRCLE_JOB}-${CIRCLE_BUILD_NUM}
-          gcloud firebase test android run --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk --results-dir ${CIRCLE_JOB}-${CIRCLE_BUILD_NUM}
+          mkdir ui-test-results
+          gcloud firebase test android run --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk --results-dir ui-test-results
 
     # Save results
     - store_artifacts:
@@ -44,7 +44,7 @@ jobs:
     - store_test_results:
         path: app/build/test-results/testDebugUnitTest/
     - store_test_results:
-        path: ${CIRCLE_JOB}-${CIRCLE_BUILD_NUM}
+        path: ui-test-results
 
 workflows:
   version: 2

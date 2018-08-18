@@ -1,10 +1,10 @@
 package com.emmaguy.audiocastradio.feature.audiostream
 
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.rule.ActivityTestRule
+import androidx.test.runner.AndroidJUnit4
+import androidx.test.runner.screenshot.Screenshot
 import com.emmaguy.audiocastradio.di.Inject
 import com.emmaguy.audiocastradio.di.Injector
-import com.google.android.libraries.cloudtesting.screenshots.ScreenShotter
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,6 +14,6 @@ class AudioStreamListActivityTest : Injector by Inject.instance {
     @Rule @JvmField val rule = ActivityTestRule(AudioStreamListActivity::class.java)
 
     @Test fun takeScreenshot() {
-        ScreenShotter.takeScreenshot("audio_stream_list_idle", rule.activity)
+        Screenshot.capture(rule.activity)
     }
 }

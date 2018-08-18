@@ -1,10 +1,10 @@
 package com.emmaguy.audiocastradio.feature.audiostream
 
 import android.os.Bundle
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.GridLayoutManager
 import android.view.Menu
 import android.view.View
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.GridLayoutManager
 import com.emmaguy.audiocastradio.R
 import com.emmaguy.audiocastradio.base.BaseActivity
 import com.emmaguy.audiocastradio.base.BaseComponent
@@ -12,11 +12,12 @@ import com.emmaguy.audiocastradio.base.BasePresenter
 import com.emmaguy.audiocastradio.common.widget.MarginDecoration
 import com.emmaguy.audiocastradio.data.AudioStream
 import com.emmaguy.audiocastradio.di.Inject
+import com.google.android.gms.cast.framework.CastButtonFactory
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.activity_audio_streams.*
 
-class AudioStreamListActivity() : BaseActivity<AudioStreamListPresenter.View>(),
+class AudioStreamListActivity : BaseActivity<AudioStreamListPresenter.View>(),
         AudioStreamListPresenter.View, BaseComponent by Inject.instance {
     private val presenter = AudioStreamListPresenter(uiScheduler, ioScheduler, audioStreamApi, onCastStateChanged, castManager, analyticsService)
 
@@ -54,7 +55,7 @@ class AudioStreamListActivity() : BaseActivity<AudioStreamListPresenter.View>(),
         super.onCreateOptionsMenu(menu)
 
         menuInflater.inflate(R.menu.cast_audio, menu)
-        castManager.setUpMediaRouteButton(menu, R.id.cast_audio_menu_item)
+        CastButtonFactory.setUpMediaRouteButton(this, menu, R.id.cast_audio_menu_item)
         return true
     }
 
@@ -67,7 +68,6 @@ class AudioStreamListActivity() : BaseActivity<AudioStreamListPresenter.View>(),
         castManager.onPause()
         super.onPause()
     }
-
 
     override fun showLoading() {
         progressBar.visibility = View.VISIBLE

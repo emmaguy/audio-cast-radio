@@ -2,11 +2,11 @@ package com.emmaguy.audiocastradio.feature.audiostream
 
 import android.content.res.Resources
 import android.graphics.Color
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.emmaguy.audiocastradio.R
 import com.emmaguy.audiocastradio.data.AudioStream
 import io.reactivex.subjects.BehaviorSubject

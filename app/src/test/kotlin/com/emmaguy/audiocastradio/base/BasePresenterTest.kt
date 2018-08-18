@@ -1,6 +1,6 @@
 package com.emmaguy.audiocastradio.base
 
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
 import org.junit.Before
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations

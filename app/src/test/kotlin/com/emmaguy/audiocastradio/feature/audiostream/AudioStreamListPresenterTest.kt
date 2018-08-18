@@ -6,16 +6,20 @@ import com.emmaguy.audiocastradio.data.AudioStream
 import com.emmaguy.audiocastradio.data.CastState
 import com.emmaguy.audiocastradio.feature.AnalyticsService
 import com.emmaguy.audiocastradio.feature.CastManager
+import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
 
 class AudioStreamListPresenterTest : BasePresenterTest<AudioStreamListPresenter, AudioStreamListPresenter.View>() {
-    private val onCastStateChanged: BehaviorSubject<CastState> = BehaviorSubject.create()
+    private val DEFAULT_NAME = "title"
+    private val DEFAULT_URL = "url"
+    private val DEFAULT_IMAGE_URL = "image_url"
+
+    private val onCastStateChanged: PublishSubject<CastState> = PublishSubject.create()
     private val audioStreamClicked: PublishSubject<AudioStream> = PublishSubject.create()
 
     @Mock private val audioStreamsApi: AudioStreamsApi? = null
@@ -23,7 +27,8 @@ class AudioStreamListPresenterTest : BasePresenterTest<AudioStreamListPresenter,
     @Mock private val analyticsService: AnalyticsService? = null
 
     override fun createPresenter(): AudioStreamListPresenter {
-        `when`(audioStreamsApi!!.audioStreams()).thenReturn(Observable.just(listOf(AudioStream(DEFAULT_NAME, DEFAULT_URL, DEFAULT_IMAGE_URL))))
+        whenever(audioStreamsApi!!.audioStreams()).thenReturn(Observable.just(listOf(AudioStream(DEFAULT_NAME,
+                DEFAULT_URL, DEFAULT_IMAGE_URL))))
 
         return AudioStreamListPresenter(Schedulers.trampoline(),
                 Schedulers.trampoline(),
@@ -35,7 +40,7 @@ class AudioStreamListPresenterTest : BasePresenterTest<AudioStreamListPresenter,
 
     override fun createView(): AudioStreamListPresenter.View {
         val view = mock(AudioStreamListPresenter.View::class.java)
-        `when`(view.onAudioStreamClicked()).thenReturn(audioStreamClicked)
+        whenever(view.onAudioStreamClicked()).thenReturn(audioStreamClicked)
         return view
     }
 
@@ -57,7 +62,7 @@ class AudioStreamListPresenterTest : BasePresenterTest<AudioStreamListPresenter,
     @Test fun audioStreamChanged_notCasting_doesNothingToCastManager() {
         presenterOnAttachView()
 
-        audioStreamClicked.onNext(null)
+        audioStreamClicked.onNext(AudioStream(DEFAULT_NAME, DEFAULT_URL, DEFAULT_IMAGE_URL))
 
         verifyZeroInteractions(castManager)
     }
@@ -70,11 +75,5 @@ class AudioStreamListPresenterTest : BasePresenterTest<AudioStreamListPresenter,
         onCastStateChanged.onNext(CastState.CONNECTED)
 
         verify(castManager!!).loadStream(audioStream)
-    }
-
-    companion object {
-        private val DEFAULT_NAME = "title"
-        private val DEFAULT_URL = "url"
-        private val DEFAULT_IMAGE_URL = "image_url"
     }
 }

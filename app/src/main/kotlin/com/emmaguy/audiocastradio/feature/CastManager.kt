@@ -1,7 +1,7 @@
 package com.emmaguy.audiocastradio.feature
 
 import android.content.Context
-import android.support.annotation.MenuRes
+import androidx.annotation.MenuRes
 import android.view.Menu
 import com.emmaguy.audiocastradio.data.AudioStream
 

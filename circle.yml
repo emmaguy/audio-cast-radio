@@ -5,50 +5,75 @@ defaults: &defaults
   - image: monzoandroid/ci:0.10
 
 jobs:
-  build:
+  build_and_checks:
     <<: *defaults
     steps:
     - checkout
+    - restore_cache:
+        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
 
     # Setup Cast SDK and Google Play Services config files
     - run: echo "castId=$CAST_APP_ID" >> app/cast.properties
     - run: echo "$GOOGLE_PLAY_SERVICES_FILE" >> app/google-services.json
-
-    # Setup Google Cloud sdk to use for Firebase Test Lab
-    - run: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/client-secret.json
-    - run: gcloud config set project audio-cast-radio
-    - run: gcloud --quiet components update
-    - run: gcloud --quiet components install beta
-    - run: gcloud auth activate-service-account circleci@audio-cast-radio.iam.gserviceaccount.com --key-file ${HOME}/client-secret.json
-
-    # Run compilation, checks and tests
     - run:
         name: Compile app apk and espresso tests apk
         command: ./gradlew assembleDebug assembleDebugAndroidTest --stacktrace --no-daemon
-    - run:
-        name: Run unit tests and lint
-        command: ./gradlew testDebug lintDebug
-    - run:
-        name: Run espresso tests
-        command: |
-          mkdir ui-test-results
-          gcloud firebase test android run --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk --results-dir ui-test-results
-
-    # Save results
+    - save_cache:
+        key: apks-{{ .Revision }}
+        paths:
+        - app/build/outputs/apk/
     - store_artifacts:
         path: app/build/outputs/apk/
         destination: apks/
     - store_artifacts:
         path: app/build/reports/
         destination: reports/
+    - run:
+        name: Run unit tests and lint
+        command: ./gradlew testDebug lintDebug
     - store_test_results:
         path: app/build/test-results/testDebugUnitTest/
+    - save_cache:
+        paths:
+        - ~/.gradle
+        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+
+  espresso_tests:
+    <<: *defaults
+    steps:
+    - checkout
+    - restore_cache:
+        key: apks-{{ .Revision }}
+
+    # Setup Google Cloud SDK to use for Firebase Test Lab
+    - run: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/client-secret.json
+    - run: gcloud config set project audio-cast-radio
+    - run: gcloud auth activate-service-account circleci@audio-cast-radio.iam.gserviceaccount.com --key-file ${HOME}/client-secret.json
+
+    - run:
+        name: Run espresso tests
+        command: gcloud firebase test android run --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk --results-dir ${CIRCLE_JOB}-${CIRCLE_BUILD_NUM}
+    - run:
+        name: Copy espresso artifacts from Google Cloud Platform bucket
+        command: |
+          mkdir espresso-results/
+          gsutil -m cp -r -U `gsutil ls gs://test-lab-jx4978yuch29c-yvvs849f9m01w/${CIRCLE_JOB}-${CIRCLE_BUILD_NUM}` espresso-results/
+    - store_artifacts:
+        path: espresso-results/
+    - run:
+        name: Copy espresso test results
+        command: |
+          mkdir espresso-test-reports/
+          find espresso-results/ -name '*.xml' -exec cp -prv '{}' 'espresso-test-reports/' ';'
     - store_test_results:
-        path: ui-test-results
+        path: espresso-test-reports/
 
 workflows:
   version: 2
 
   workflow:
     jobs:
-    - build
+    - build_and_checks
+    - espresso_tests:
+        requires:
+        - build_and_checks
